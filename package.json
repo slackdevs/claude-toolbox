@@ -1,0 +1,25 @@
+{
+  "name": "claude-toolbox",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Herramientas en el navegador para profesionales de Claude, la Claude API y Claude Code",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "vue-tsc --noEmit",
+    "script:create:tool": "node scripts/create-tool.mjs"
+  },
+  "dependencies": {
+    "vue": "^3.5.45",
+    "vue-router": "^5.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@vitejs/plugin-vue": "^6.0.10",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.6",
+    "vue-tsc": "^3.3.14"
+  }
+}
