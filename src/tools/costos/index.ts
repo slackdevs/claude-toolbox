@@ -1,10 +1,13 @@
 import { defineTool } from '../tool';
 
 export const tool = defineTool({
-  name: 'Calculadora de costos API',
+  name: { es: 'Calculadora de costos API', en: 'API cost calculator' },
   path: '/costos',
-  description: 'Costo por request, día y mes por modelo, con prompt caching y Batch API. Compara los 4 modelos.',
-  keywords: ['precio', 'pricing', 'cache', 'batch', 'presupuesto'],
+  description: {
+    es: 'Costo por request, día y mes por modelo, con prompt caching y Batch API. Compara los 4 modelos.',
+    en: 'Cost per request, day and month per model, with prompt caching and the Batch API. Compares all 4 models.',
+  },
+  keywords: ['precio', 'pricing', 'cache', 'batch', 'presupuesto', 'price', 'budget'],
   icon: '$',
   category: 'api',
   certs: ['A', 'D', 'AF', 'AP', 'B'],

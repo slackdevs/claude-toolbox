@@ -2,6 +2,7 @@
 import { computed, reactive } from 'vue';
 import CodeOutput from '@/components/CodeOutput.vue';
 import LintList from '@/components/LintList.vue';
+import { ui, useMessages } from '@/i18n';
 import { kvLines, lines } from '@/lib/format';
 import type { Lint } from '@/lib/types';
 
@@ -12,6 +13,49 @@ const PRESETS: Record<Kind, string[]> = {
   ask: ['Bash(git push *)', 'Bash(git commit *)', 'Bash(npm install *)'],
   deny: ['Read(./.env)', 'Read(./.env.*)', 'Read(./secrets/**)', 'Bash(curl *)', 'Bash(rm -rf *)'],
 };
+
+const t = useMessages({
+  es: {
+    extra: 'Reglas extra (una por línea)',
+    unset: '(sin definir)',
+    file: 'Archivo destino',
+    team: 'equipo',
+    personal: 'personal',
+    user: 'usuario',
+    env: 'env (KEY=valor)',
+    order1: 'Orden de evaluación:',
+    order2: '; la primera coincidencia decide. Precedencia de archivos: política gestionada > argumentos CLI > local > proyecto > usuario.',
+    l: {
+      bashAll: '<code>Bash</code> sin especificador en allow aprueba cualquier comando.',
+      bypass: 'bypassPermissions omite todas las confirmaciones: solo en contenedores aislados o CI efímeros.',
+      envOk: 'Secretos protegidos por deny.',
+      envWarn: 'Considerá denegar lectura de <code>.env</code> y secretos.',
+      curl: 'Permitir curl/wget habilita exfiltración de datos; preferí WebFetch(domain:…).',
+      secret: 'Posible secreto en env de un archivo compartido.',
+      prefix: 'Los patrones Bash son por prefijo y pueden eludirse con encadenamientos; para garantías fuertes combiná con hooks PreToolUse o sandbox.',
+    },
+  },
+  en: {
+    extra: 'Extra rules (one per line)',
+    unset: '(not set)',
+    file: 'Target file',
+    team: 'team',
+    personal: 'personal',
+    user: 'user',
+    env: 'env (KEY=value)',
+    order1: 'Evaluation order:',
+    order2: '; the first match wins. File precedence: managed policy > CLI arguments > local > project > user.',
+    l: {
+      bashAll: '<code>Bash</code> without a specifier in allow approves any command.',
+      bypass: 'bypassPermissions skips all confirmations: only use it in isolated containers or ephemeral CI.',
+      envOk: 'Secrets protected by deny.',
+      envWarn: 'Consider denying reads of <code>.env</code> and secrets.',
+      curl: 'Allowing curl/wget enables data exfiltration; prefer WebFetch(domain:…).',
+      secret: 'Possible secret in env of a shared file.',
+      prefix: 'Bash patterns match by prefix and can be bypassed with command chaining; for strong guarantees combine them with PreToolUse hooks or a sandbox.',
+    },
+  },
+});
 
 const s = reactive({
   picked: { allow: [...PRESETS.allow], ask: [PRESETS.ask[0]!], deny: [...PRESETS.deny] } as Record<Kind, string[]>,
@@ -35,13 +79,14 @@ const json = computed(() => {
 
 const lint = computed<Lint[]>(() => {
   const L: Lint[] = [];
+  const m = t.value.l;
   const allow = rules.value.allow;
-  if (allow.includes('Bash') || allow.includes('Bash(*)')) L.push(['bad', '<code>Bash</code> sin especificador en allow aprueba cualquier comando.']);
-  if (s.mode === 'bypassPermissions') L.push(['bad', 'bypassPermissions omite todas las confirmaciones: solo en contenedores aislados o CI efímeros.']);
-  L.push(rules.value.deny.some((x) => /\.env/.test(x)) ? ['ok', 'Secretos protegidos por deny.'] : ['warn', 'Considerá denegar lectura de <code>.env</code> y secretos.']);
-  if (allow.some((x) => /^Bash\((curl|wget)/.test(x))) L.push(['warn', 'Permitir curl/wget habilita exfiltración de datos; preferí WebFetch(domain:…).']);
-  if (!s.file.includes('local') && Object.values(env.value).some((v) => v.length > 16)) L.push(['bad', 'Posible secreto en env de un archivo compartido.']);
-  L.push(['ok', 'Los patrones Bash son por prefijo y pueden eludirse con encadenamientos; para garantías fuertes combiná con hooks PreToolUse o sandbox.']);
+  if (allow.includes('Bash') || allow.includes('Bash(*)')) L.push(['bad', m.bashAll]);
+  if (s.mode === 'bypassPermissions') L.push(['bad', m.bypass]);
+  L.push(rules.value.deny.some((x) => /\.env/.test(x)) ? ['ok', m.envOk] : ['warn', m.envWarn]);
+  if (allow.some((x) => /^Bash\((curl|wget)/.test(x))) L.push(['warn', m.curl]);
+  if (!s.file.includes('local') && Object.values(env.value).some((v) => v.length > 16)) L.push(['bad', m.secret]);
+  L.push(['ok', m.prefix]);
   return L;
 });
 </script>
@@ -54,28 +99,28 @@ const lint = computed<Lint[]>(() => {
         <div class="btns">
           <label v-for="p in PRESETS[k]" :key="p" class="chk"><input v-model="s.picked[k]" type="checkbox" :value="p"><code>{{ p }}</code></label>
         </div>
-        <label>Reglas extra (una por línea)<textarea v-model="s.extra[k]" style="min-height:44px" /></label>
+        <label>{{ t.extra }}<textarea v-model="s.extra[k]" style="min-height:44px" /></label>
       </template>
       <div class="row" style="margin-top:10px">
         <label>defaultMode
-          <select v-model="s.mode"><option value="">(sin definir)</option><option>default</option><option>acceptEdits</option><option>plan</option><option>bypassPermissions</option></select>
+          <select v-model="s.mode"><option value="">{{ t.unset }}</option><option>default</option><option>acceptEdits</option><option>plan</option><option>bypassPermissions</option></select>
         </label>
-        <label>Archivo destino
+        <label>{{ t.file }}
           <select v-model="s.file">
-            <option value=".claude/settings.json">.claude/settings.json (equipo)</option>
-            <option value=".claude/settings.local.json">.claude/settings.local.json (personal)</option>
-            <option value="~/.claude/settings.json">~/.claude/settings.json (usuario)</option>
+            <option value=".claude/settings.json">.claude/settings.json ({{ t.team }})</option>
+            <option value=".claude/settings.local.json">.claude/settings.local.json ({{ t.personal }})</option>
+            <option value="~/.claude/settings.json">~/.claude/settings.json ({{ t.user }})</option>
           </select>
         </label>
       </div>
-      <label>env (KEY=valor)<textarea v-model="s.env" style="min-height:44px" /></label>
+      <label>{{ t.env }}<textarea v-model="s.env" style="min-height:44px" /></label>
     </div>
     <div>
       <CodeOutput :code="json" :label="s.file" />
       <div class="card">
-        <h3>Revisión</h3>
+        <h3>{{ ui.review }}</h3>
         <LintList :items="lint" />
-        <p class="note">Orden de evaluación: <b>deny → ask → allow</b>; la primera coincidencia decide. Precedencia de archivos: política gestionada &gt; argumentos CLI &gt; local &gt; proyecto &gt; usuario.</p>
+        <p class="note">{{ t.order1 }} <b>deny → ask → allow</b>{{ t.order2 }}</p>
       </div>
     </div>
   </div>

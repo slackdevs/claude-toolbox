@@ -1,10 +1,13 @@
 import { defineTool } from '../tool';
 
 export const tool = defineTool({
-  name: 'Constructor de settings.json y permisos',
+  name: { es: 'Constructor de settings.json y permisos', en: 'settings.json and permissions builder' },
   path: '/permisos',
-  description: 'Reglas allow / ask / deny, modo de permisos por defecto y variables de entorno, con lint de seguridad.',
-  keywords: ['settings', 'permissions', 'allow', 'deny', 'seguridad'],
+  description: {
+    es: 'Reglas allow / ask / deny, modo de permisos por defecto y variables de entorno, con lint de seguridad.',
+    en: 'allow / ask / deny rules, default permission mode and environment variables, with a security lint.',
+  },
+  keywords: ['settings', 'permissions', 'allow', 'deny', 'seguridad', 'security'],
   icon: '🔒',
   category: 'code',
   certs: ['AF', 'AP', 'B'],

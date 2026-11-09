@@ -2,6 +2,7 @@
 export const BRAND = {
   site: 'https://slackdevs.com/',
   siteEs: 'https://slackdevs.com/es/',
+  siteEn: 'https://slackdevs.com/',
   articles: 'https://slackdevs.com/es/articulos/',
   author: 'Sebastián Larrauri',
   twitter: '@aislackdevs',

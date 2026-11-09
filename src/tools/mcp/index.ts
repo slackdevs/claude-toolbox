@@ -1,10 +1,13 @@
 import { defineTool } from '../tool';
 
 export const tool = defineTool({
-  name: 'Configurador de servidores MCP',
+  name: { es: 'Configurador de servidores MCP', en: 'MCP server configurator' },
   path: '/mcp',
-  description: 'Genera el comando claude mcp add, el .mcp.json de proyecto y la config de Claude Desktop, para stdio o HTTP remoto.',
-  keywords: ['model context protocol', 'servidor', '.mcp.json', 'conector'],
+  description: {
+    es: 'Genera el comando claude mcp add, el .mcp.json de proyecto y la config de Claude Desktop, para stdio o HTTP remoto.',
+    en: 'Generates the claude mcp add command, the project .mcp.json and the Claude Desktop config, for stdio or remote HTTP.',
+  },
+  keywords: ['model context protocol', 'servidor', '.mcp.json', 'conector', 'server', 'connector'],
   icon: '⧉',
   category: 'tools',
   certs: ['D', 'AF', 'AP', 'B'],

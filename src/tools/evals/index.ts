@@ -1,10 +1,13 @@
 import { defineTool } from '../tool';
 
 export const tool = defineTool({
-  name: 'Generador de evals (LLM como juez)',
+  name: { es: 'Generador de evals (LLM como juez)', en: 'Eval generator (LLM as judge)' },
   path: '/evals',
-  description: 'Define criterios y escala y obtené un prompt de evaluación con salida JSON, más recomendaciones para calibrar evals.',
-  keywords: ['evaluación', 'rúbrica', 'judge', 'testing'],
+  description: {
+    es: 'Define criterios y escala y obtené un prompt de evaluación con salida JSON, más recomendaciones para calibrar evals.',
+    en: 'Define criteria and a scale and get an evaluation prompt with JSON output, plus recommendations for calibrating evals.',
+  },
+  keywords: ['evaluación', 'rúbrica', 'judge', 'testing', 'evaluation', 'rubric'],
   icon: '★',
   category: 'prompt',
   certs: ['A', 'D', 'AF', 'AP'],

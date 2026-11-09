@@ -1,4 +1,5 @@
 import { ref } from 'vue';
+import { ui } from '@/i18n';
 
 export const toastMessage = ref('');
 export const toastVisible = ref(false);
@@ -14,7 +15,7 @@ export function toast(message: string) {
 export async function copyText(text: string) {
   try {
     await navigator.clipboard.writeText(text);
-    toast('¡Copiado!');
+    toast(ui.value.copied);
   } catch {
     const ta = document.createElement('textarea');
     ta.value = text;
@@ -22,9 +23,9 @@ export async function copyText(text: string) {
     ta.select();
     try {
       document.execCommand('copy');
-      toast('¡Copiado!');
+      toast(ui.value.copied);
     } catch {
-      toast('Seleccioná y copiá manualmente');
+      toast(ui.value.copyManual);
     }
     ta.remove();
   }

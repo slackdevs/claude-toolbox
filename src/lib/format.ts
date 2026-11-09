@@ -1,8 +1,10 @@
+import { intlLocale } from '@/i18n';
+
 export const esc = (s: unknown): string =>
   String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 
 export const fmt = (n: number, d = 0): string =>
-  Number(n).toLocaleString('es-AR', { minimumFractionDigits: d, maximumFractionDigits: d });
+  Number(n).toLocaleString(intlLocale(), { minimumFractionDigits: d, maximumFractionDigits: d });
 
 export const usd = (n: number): string =>
   '$' + (n >= 1 || n === 0 ? fmt(n, 2) : n >= 0.01 ? fmt(n, 4) : fmt(n, 5));

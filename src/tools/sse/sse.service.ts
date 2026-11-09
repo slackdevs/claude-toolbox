@@ -1,3 +1,5 @@
+import type { Localized } from '@/i18n';
+
 export interface SseBlock { type: string; name?: string; text: string; json: string; thinking: string }
 export interface SseSummary {
   events: number;
@@ -10,8 +12,27 @@ export interface SseSummary {
   model: string;
 }
 
+export interface SseMessages {
+  invalidJson: (i: number) => string;
+  apiError: (type: string, message: string) => string;
+  partialJson: string;
+}
+
+export const SSE_MESSAGES: Localized<SseMessages> = {
+  es: {
+    invalidJson: (i) => `Evento ${i}: JSON inválido`,
+    apiError: (type, message) => `Error de API: ${type} — ${message}`,
+    partialJson: '⚠ JSON parcial/incompleto',
+  },
+  en: {
+    invalidJson: (i) => `Event ${i}: invalid JSON`,
+    apiError: (type, message) => `API error: ${type} — ${message}`,
+    partialJson: '⚠ Partial/incomplete JSON',
+  },
+};
+
 /** Parsea un stream SSE crudo de la Messages API y reconstruye el mensaje. */
-export function parseSse(raw: string): SseSummary | null {
+export function parseSse(raw: string, m: SseMessages = SSE_MESSAGES.es): SseSummary | null {
   const evs: { event?: string; data?: string }[] = [];
   let cur: { event?: string; data?: string } = {};
   for (const ln of raw.split(/\r?\n/)) {
@@ -36,7 +57,7 @@ export function parseSse(raw: string): SseSummary | null {
     try {
       d = JSON.parse(e.data || '{}');
     } catch {
-      errors.push(`Evento ${i + 1}: JSON inválido`);
+      errors.push(m.invalidJson(i + 1));
       return;
     }
     const type: string = d.type || e.event || '?';
@@ -59,34 +80,34 @@ export function parseSse(raw: string): SseSummary | null {
       stopReason = d.delta?.stop_reason ?? stopReason;
       outputTokens = d.usage?.output_tokens ?? outputTokens;
     }
-    if (type === 'error') errors.push(`Error de API: ${d.error?.type} — ${d.error?.message}`);
+    if (type === 'error') errors.push(m.apiError(d.error?.type, d.error?.message));
   });
 
   return { events: evs.length, blocks: Object.entries(blocks), counts, errors, stopReason, inputTokens, outputTokens, model };
 }
 
-export function blockContent(b: SseBlock): string {
+export function blockContent(b: SseBlock, m: SseMessages = SSE_MESSAGES.es): string {
   if (b.type === 'tool_use') {
     try {
       return JSON.stringify(JSON.parse(b.json || '{}'), null, 2);
     } catch {
-      return b.json + '\n⚠ JSON parcial/incompleto';
+      return b.json + '\n' + m.partialJson;
     }
   }
   return b.type === 'thinking' ? b.thinking : b.text;
 }
 
-export const SSE_SAMPLE = `event: message_start
+const sample = (part1: string, part2: string) => `event: message_start
 data: {"type":"message_start","message":{"id":"msg_01","type":"message","role":"assistant","model":"claude-sonnet-5-5","content":[],"stop_reason":null,"usage":{"input_tokens":412,"output_tokens":1}}}
 
 event: content_block_start
 data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}}
 
 event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Voy a consultar "}}
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"${part1}"}}
 
 event: content_block_delta
-data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"el clima."}}
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"${part2}"}}
 
 event: content_block_stop
 data: {"type":"content_block_stop","index":0}
@@ -108,3 +129,8 @@ data: {"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":
 
 event: message_stop
 data: {"type":"message_stop"}`;
+
+export const SSE_SAMPLE: Localized = {
+  es: sample('Voy a consultar ', 'el clima.'),
+  en: sample('Let me check ', 'the weather.'),
+};

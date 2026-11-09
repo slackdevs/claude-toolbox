@@ -2,11 +2,47 @@
 import { computed, reactive } from 'vue';
 import CodeOutput from '@/components/CodeOutput.vue';
 import LintList from '@/components/LintList.vue';
+import { useMessages } from '@/i18n';
 import { n, shq } from '@/lib/format';
 import type { Lint } from '@/lib/types';
 
+const t = useMessages({
+  es: {
+    trigger: 'Disparador en GitHub',
+    pr: 'Al abrir/actualizar un PR',
+    mention: 'Al mencionar @claude',
+    cron: 'Programado (diario)',
+    appendPh: 'Responde en español.',
+    terminal: 'terminal / script',
+    pipe: '# Pipe de entrada:\ngit diff main...HEAD | claude -p "Resume estos cambios para el changelog"',
+    install: '# Instalación guiada desde la terminal de Claude Code: /install-github-app',
+    defPrompt: 'Revisa los cambios de este PR. Reporta solo problemas de seguridad y bugs probables, con archivo y línea.',
+    tips: [
+      ['ok', '<code>-p</code> (print) ejecuta sin interacción y sale: es el modo para CI. Con <code>--output-format json</code> obtenés resultado, costo y session_id parseables.'],
+      ['ok', 'En CI limitá herramientas con --allowedTools y acotá con --max-turns; nunca expongas la API key en logs (usá secrets).'],
+      ['warn', 'Pedí salida estructurada (JSON) para que el pipeline pueda decidir (comentar, fallar el job) sin parsear prosa.'],
+    ] as Lint[],
+  },
+  en: {
+    trigger: 'GitHub trigger',
+    pr: 'When a PR is opened/updated',
+    mention: 'When @claude is mentioned',
+    cron: 'Scheduled (daily)',
+    appendPh: 'Respond in English.',
+    terminal: 'terminal / script',
+    pipe: '# Piping input:\ngit diff main...HEAD | claude -p "Summarize these changes for the changelog"',
+    install: '# Guided setup from the Claude Code terminal: /install-github-app',
+    defPrompt: 'Review the changes in this PR. Report only security issues and likely bugs, with file and line.',
+    tips: [
+      ['ok', '<code>-p</code> (print) runs non-interactively and exits: it is the mode for CI. With <code>--output-format json</code> you get a parseable result, cost and session_id.'],
+      ['ok', 'In CI, restrict tools with --allowedTools and cap runs with --max-turns; never expose the API key in logs (use secrets).'],
+      ['warn', 'Ask for structured output (JSON) so the pipeline can decide (comment, fail the job) without parsing prose.'],
+    ] as Lint[],
+  },
+});
+
 const s = reactive({
-  prompt: 'Revisa los cambios de este PR. Reporta solo problemas de seguridad y bugs probables, con archivo y línea.',
+  prompt: t.value.defPrompt,
   format: 'json', maxTurns: 5 as number | string, model: 'sonnet',
   allowed: 'Read,Grep,Glob,Bash(git diff *)', disallowed: 'Edit,Write',
   permissionMode: '', appendSystem: '', trigger: 'pr' as 'pr' | 'mention' | 'cron',
@@ -22,7 +58,7 @@ const cli = computed(() => {
   if (s.appendSystem) a.push(`--append-system-prompt ${shq(s.appendSystem)}`);
   let out = a.join(' \\\n  ');
   if (s.format === 'json') out += " \\\n  | jq -r '.result'";
-  return out + '\n\n# Pipe de entrada:\ngit diff main...HEAD | claude -p "Resume estos cambios para el changelog"';
+  return out + '\n\n' + t.value.pipe;
 });
 
 const workflow = computed(() => {
@@ -52,14 +88,8 @@ ${s.trigger === 'mention' ? "    if: contains(github.event.comment.body, '@claud
           anthropic_api_key: \${{ secrets.ANTHROPIC_API_KEY }}
 ${s.trigger === 'mention' ? '' : `          prompt: ${JSON.stringify(s.prompt)}\n`}          claude_args: ${JSON.stringify(args)}
 
-# Instalación guiada desde la terminal de Claude Code: /install-github-app`;
+${t.value.install}`;
 });
-
-const TIPS: Lint[] = [
-  ['ok', '<code>-p</code> (print) ejecuta sin interacción y sale: es el modo para CI. Con <code>--output-format json</code> obtenés resultado, costo y session_id parseables.'],
-  ['ok', 'En CI limitá herramientas con --allowedTools y acotá con --max-turns; nunca expongas la API key en logs (usá secrets).'],
-  ['warn', 'Pedí salida estructurada (JSON) para que el pipeline pueda decidir (comentar, fallar el job) sin parsear prosa.'],
-];
 </script>
 
 <template>
@@ -78,19 +108,19 @@ const TIPS: Lint[] = [
         </div>
         <div class="row">
           <label>--permission-mode<select v-model="s.permissionMode"><option value="">—</option><option>default</option><option>acceptEdits</option><option>plan</option></select></label>
-          <label>--append-system-prompt<input v-model="s.appendSystem" placeholder="Responde en español."></label>
+          <label>--append-system-prompt<input v-model="s.appendSystem" :placeholder="t.appendPh"></label>
         </div>
         <div class="row">
-          <label>Disparador en GitHub
-            <select v-model="s.trigger"><option value="pr">Al abrir/actualizar un PR</option><option value="mention">Al mencionar @claude</option><option value="cron">Programado (diario)</option></select>
+          <label>{{ t.trigger }}
+            <select v-model="s.trigger"><option value="pr">{{ t.pr }}</option><option value="mention">{{ t.mention }}</option><option value="cron">{{ t.cron }}</option></select>
           </label>
         </div>
       </div>
       <div>
-        <CodeOutput :code="cli" label="terminal / script" />
+        <CodeOutput :code="cli" :label="t.terminal" />
         <CodeOutput :code="workflow" label=".github/workflows/claude.yml" />
       </div>
     </div>
-    <div class="card"><LintList :items="TIPS" /></div>
+    <div class="card"><LintList :items="t.tips" /></div>
   </div>
 </template>

@@ -51,6 +51,7 @@ src/
 ├── components/             # CodeOutput, TabbedCode, LintList, ToolCard, ...
 ├── composables/            # estado global, localStorage, toast/copiar
 ├── lib/                    # utilidades compartidas: formato, modelos y precios, certificaciones
+├── i18n/                   # idioma actual (es/en), helpers tr() y useMessages(), textos comunes (ui.ts)
 └── tools/
     ├── tool.ts             # tipo Tool + defineTool()
     ├── index.ts            # registro automático + categorías
@@ -69,9 +70,30 @@ npm run script:create:tool -- mi-herramienta
 Genera `src/tools/mi-herramienta/` con `index.ts` y el componente. El registro es automático (`import.meta.glob`), así que no hay que editar ningún índice. Completá en `index.ts` la categoría (`api`, `prompt`, `tools`, `code`, `arch`) y las certificaciones (`A`, `D`, `AF`, `AP`, `B`).
 
 Convenciones:
+- Todo texto visible va en español e inglés (ver [Idiomas](#idiomas)).
 - La lógica pura va en `<herramienta>.service.ts` para poder testearla sin el componente.
 - Los mensajes de `LintList` admiten HTML propio: escapá siempre el input del usuario con `esc()` de `@/lib/format`.
 - Los precios de modelos viven en `src/lib/models.ts`: actualizalos ahí y se reflejan en todas las herramientas.
+
+## Idiomas
+
+La interfaz está en **español e inglés**. El botón `ES / EN` del header cambia el idioma; la elección se guarda en `localStorage` (`ct-lang`) y, la primera vez, se toma del idioma del navegador. Sin dependencias: es un i18n mínimo en `src/i18n/`.
+
+- **Textos comunes** (header, sidebar, home, botones): `src/i18n/ui.ts`.
+- **Metadatos de cada herramienta**: `name` y `description` son `{ es, en }` en su `index.ts`.
+- **Textos de un componente**: co-ubicados con `useMessages()`. TypeScript exige que `en` tenga las mismas claves que `es`:
+
+  ```ts
+  const t = useMessages({
+    es: { title: 'Resultado', total: (n: number) => `${n} tokens` },
+    en: { title: 'Result', total: (n: number) => `${n} tokens` },
+  });
+  // template: {{ t.title }} · script: t.value.total(5)
+  ```
+
+- **Datos** (`*.data.ts`, `*.service.ts`): exportá `Localized<T>` y elegí la variante con `tr()`.
+- Al cambiar de idioma la herramienta abierta se vuelve a montar, así sus valores de ejemplo aparecen en el idioma nuevo (lo que se haya escrito en los campos se pierde).
+- `fmt()` formatea números según el idioma (`es-AR` / `en-US`).
 
 ## Herramientas
 

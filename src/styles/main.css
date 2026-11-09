@@ -139,6 +139,10 @@ header.site-header {
   color: var(--color-primary); box-shadow: 0 0 12px var(--color-primary-dim);
 }
 .header-btn.accent { border-color: var(--border-accent); color: var(--color-primary); }
+.lang-btn { gap: 0.3rem; }
+.lang-btn span { opacity: 0.45; }
+.lang-btn span.on { opacity: 1; color: var(--color-primary); }
+.lang-btn .sep { opacity: 0.3; }
 .menu-btn { display: none; }
 
 /* ---------- Layout ---------- */

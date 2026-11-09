@@ -1,10 +1,13 @@
 import { defineTool } from '../tool';
 
 export const tool = defineTool({
-  name: 'Validador de JSON Schema',
+  name: { es: 'Validador de JSON Schema', en: 'JSON Schema validator' },
   path: '/json-schema',
-  description: 'Valida la salida de Claude contra un schema (extracción, structured output) y genera un schema a partir de un ejemplo.',
-  keywords: ['validación', 'structured output', 'extracción', 'schema'],
+  description: {
+    es: 'Valida la salida de Claude contra un schema (extracción, structured output) y genera un schema a partir de un ejemplo.',
+    en: 'Validates Claude output against a schema (extraction, structured output) and generates a schema from an example.',
+  },
+  keywords: ['validación', 'structured output', 'extracción', 'schema', 'validation', 'extraction'],
   icon: '{}',
   category: 'tools',
   certs: ['D', 'AF'],

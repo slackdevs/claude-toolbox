@@ -23,9 +23,12 @@ const title = name.split('-').map((w) => w[0].toUpperCase() + w.slice(1)).join('
 writeFileSync(join(dir, 'index.ts'), `import { defineTool } from '../tool';
 
 export const tool = defineTool({
-  name: '${title}',
+  name: { es: '${title}', en: '${title}' },
   path: '/${name}',
-  description: 'TODO: qué hace esta herramienta, en una oración.',
+  description: {
+    es: 'TODO: qué hace esta herramienta, en una oración.',
+    en: 'TODO: what this tool does, in one sentence.',
+  },
   keywords: [],
   icon: '◇',
   category: 'api', // api | prompt | tools | code | arch
@@ -37,6 +40,12 @@ export const tool = defineTool({
 writeFileSync(join(dir, `${name}.vue`), `<script setup lang="ts">
 import { computed, ref } from 'vue';
 import CodeOutput from '@/components/CodeOutput.vue';
+import { useMessages } from '@/i18n';
+
+const t = useMessages({
+  es: { input: 'Entrada', output: 'salida' },
+  en: { input: 'Input', output: 'output' },
+});
 
 const input = ref('');
 const output = computed(() => input.value);
@@ -45,9 +54,9 @@ const output = computed(() => input.value);
 <template>
   <div class="grid2">
     <div class="card">
-      <label>Entrada<textarea v-model="input" /></label>
+      <label>{{ t.input }}<textarea v-model="input" /></label>
     </div>
-    <CodeOutput :code="output" label="salida" />
+    <CodeOutput :code="output" :label="t.output" />
   </div>
 </template>
 `);

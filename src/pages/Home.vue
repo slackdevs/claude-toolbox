@@ -2,15 +2,18 @@
 import { computed } from 'vue';
 import ToolCard from '@/components/ToolCard.vue';
 import { certFilter, favorites, query } from '@/composables/useAppState';
+import { tr, ui } from '@/i18n';
 import { CERT_KEYS, CERTS } from '@/lib/certs';
 import { tools, toolsByCategory } from '@/tools';
 import type { Tool } from '@/tools/tool';
 
+// Busca en ambos idiomas: una palabra en inglés encuentra la herramienta aunque la UI esté en español (y viceversa).
 const matches = (t: Tool) => {
   const q = query.value.trim().toLowerCase();
   if (certFilter.value && !t.certs.includes(certFilter.value)) return false;
   if (!q) return true;
-  return [t.name, t.description, ...t.keywords, ...t.certs.map((c) => CERTS[c].code)].join(' ').toLowerCase().includes(q);
+  return [t.name.es, t.name.en, t.description.es, t.description.en, ...t.keywords, ...t.certs.map((c) => CERTS[c].code)]
+    .join(' ').toLowerCase().includes(q);
 };
 
 const favTools = computed(() => tools.filter((t) => favorites.value.includes(t.path) && matches(t)));
@@ -20,31 +23,27 @@ const groups = computed(() => toolsByCategory.map((c) => ({ ...c, tools: c.tools
 <template>
   <div>
     <div class="hero">
-      <div class="meta-badge"><span class="dot cyan" /> Toolbox · {{ tools.length }} herramientas · 100% en tu navegador</div>
-      <h1>Herramientas para profesionales de Claude</h1>
-      <p class="hero-subtitle">API · Prompts · MCP · <span class="hl">Claude Code</span> · Agentes</p>
-      <p>
-        Utilidades para diseñar prompts, estimar costos, configurar Claude Code, MCP y agentes,
-        organizadas según lo que evalúan las certificaciones Associate, Developer y Architect y el Partner Badge de Claude Code.
-        Nada se envía a ningún servidor.
-      </p>
+      <div class="meta-badge"><span class="dot cyan" /> {{ ui.heroBadge(tools.length) }}</div>
+      <h1>{{ ui.heroTitle }}</h1>
+      <p class="hero-subtitle">API · Prompts · MCP · <span class="hl">Claude Code</span> · {{ ui.agents }}</p>
+      <p>{{ ui.heroText }}</p>
     </div>
     <div class="chips">
-      <button class="chip" :class="{ on: !certFilter }" @click="certFilter = ''">Todas</button>
+      <button class="chip" :class="{ on: !certFilter }" @click="certFilter = ''">{{ ui.all }}</button>
       <button v-for="k in CERT_KEYS" :key="k" class="chip" :class="{ on: certFilter === k }" @click="certFilter = k">
         <span class="dot" :class="CERTS[k].color" />{{ CERTS[k].code }} · {{ CERTS[k].name }}
       </button>
     </div>
 
     <template v-if="favTools.length">
-      <div class="sec-title">Favoritos</div>
+      <div class="sec-title">{{ ui.favorites }}</div>
       <div class="cards"><ToolCard v-for="t in favTools" :key="t.path" :tool="t" /></div>
     </template>
 
     <template v-for="g in groups" :key="g.key">
-      <div class="sec-title">{{ g.name }}</div>
+      <div class="sec-title">{{ tr(g.name) }}</div>
       <div class="cards"><ToolCard v-for="t in g.tools" :key="t.path" :tool="t" /></div>
     </template>
-    <div v-if="!groups.length" class="empty">Ninguna herramienta coincide con la búsqueda.</div>
+    <div v-if="!groups.length" class="empty">{{ ui.noMatch }}</div>
   </div>
 </template>

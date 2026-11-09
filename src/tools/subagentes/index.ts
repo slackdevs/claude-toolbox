@@ -1,10 +1,13 @@
 import { defineTool } from '../tool';
 
 export const tool = defineTool({
-  name: 'Constructor de subagentes',
+  name: { es: 'Constructor de subagentes', en: 'Subagent builder' },
   path: '/subagentes',
-  description: 'Crea .claude/agents/*.md con frontmatter válido, herramientas mínimas y un system prompt enfocado.',
-  keywords: ['agents', 'subagent', 'delegar', 'frontmatter'],
+  description: {
+    es: 'Crea .claude/agents/*.md con frontmatter válido, herramientas mínimas y un system prompt enfocado.',
+    en: 'Creates .claude/agents/*.md with valid frontmatter, minimal tools and a focused system prompt.',
+  },
+  keywords: ['agents', 'subagent', 'delegar', 'frontmatter', 'delegate'],
   icon: '⑂',
   category: 'code',
   certs: ['AF', 'AP', 'B'],

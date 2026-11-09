@@ -1,10 +1,13 @@
 import { defineTool } from '../tool';
 
 export const tool = defineTool({
-  name: 'Referencia de errores y stop_reason',
+  name: { es: 'Referencia de errores y stop_reason', en: 'Errors and stop_reason reference' },
   path: '/errores',
-  description: 'Códigos HTTP, tipos de error, valores de stop_reason y cómo manejarlos en producción y en loops agénticos.',
-  keywords: ['429', '529', 'retry', 'backoff', 'overloaded'],
+  description: {
+    es: 'Códigos HTTP, tipos de error, valores de stop_reason y cómo manejarlos en producción y en loops agénticos.',
+    en: 'HTTP codes, error types, stop_reason values and how to handle them in production and in agentic loops.',
+  },
+  keywords: ['429', '529', 'retry', 'backoff', 'overloaded', 'errors'],
   icon: '!',
   category: 'api',
   certs: ['D', 'AF', 'AP'],
