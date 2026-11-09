@@ -13,12 +13,22 @@ Slackdevs tools for Anthropic Claude and Claude Code.
 
 Todo corre del lado del cliente: no se envía ningún dato a servidores.
 
+## Identidad visual
+
+Hereda el sistema de [slackdevs.com](https://slackdevs.com) (“Literary Cyber-Minimalism”):
+
+- **Colores**: ámbar `#e5a93c` (primario), violeta `#8b5cf6`, cian `#00e5ff`, fondo `#090a0f` con grilla sutil. Variables en `:root` de `src/styles/main.css`, con los mismos nombres que `website/css/style.css`: si cambia la marca, actualizá ambos.
+- **Tipografías**: Playfair Display (títulos), Inter (texto), JetBrains Mono (etiquetas, código, botones).
+- **Marca**: hexágono “SL”, favicon en `public/favicon.svg`, imagen social en `public/og-tools.jpg`.
+- **Insignias** de certificación en `src/assets/badges/` (copiadas de `website/assets/badges/`); color por credencial en `src/lib/certs.ts`.
+- Enlaces a slackdevs.com, artículos y páginas legales en `src/lib/brand.ts`.
+
 ## Stack
 
 - [Vue 3](https://vuejs.org) + `<script setup>` + TypeScript
 - [Vite](https://vite.dev)
 - [Vue Router](https://router.vuejs.org) (hash history, compatible con GitHub Pages)
-- Sin librería de UI: estilos propios en `src/styles/main.css`
+- Sin librería de UI: estilos propios en `src/styles/main.css` (solo tema oscuro, como el sitio principal)
 
 ## Desarrollo
 
@@ -79,6 +89,8 @@ Convenciones:
 
 `legacy/standalone.html` conserva la versión 0.1 en un solo archivo HTML.
 
+Si publicás en un dominio propio (por ejemplo `tools.slackdevs.com`), actualizá las URLs absolutas de `og:url`, `og:image` y `twitter:image` en `index.html`.
+
 ## Aviso
 
-Proyecto independiente, no afiliado ni respaldado por Anthropic. “Claude” y “Claude Code” son marcas de Anthropic. Los precios y los datos de los exámenes provienen de fuentes públicas (noviembre 2026) y pueden cambiar: verificalos en la documentación oficial.
+Proyecto independiente de Sebastián Larrauri ([slackdevs.com](https://slackdevs.com)),, no afiliado ni respaldado por Anthropic. “Claude” y “Claude Code” son marcas de Anthropic. Los precios y los datos de los exámenes provienen de fuentes públicas (noviembre 2026) y pueden cambiar: verificalos en la documentación oficial.

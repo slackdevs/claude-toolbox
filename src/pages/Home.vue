@@ -20,9 +20,11 @@ const groups = computed(() => toolsByCategory.map((c) => ({ ...c, tools: c.tools
 <template>
   <div>
     <div class="hero">
+      <div class="meta-badge"><span class="dot cyan" /> Toolbox · {{ tools.length }} herramientas · 100% en tu navegador</div>
       <h1>Herramientas para profesionales de Claude</h1>
+      <p class="hero-subtitle">API · Prompts · MCP · <span class="hl">Claude Code</span> · Agentes</p>
       <p>
-        {{ tools.length }} utilidades que corren en tu navegador para diseñar prompts, estimar costos, configurar Claude Code, MCP y agentes,
+        Utilidades para diseñar prompts, estimar costos, configurar Claude Code, MCP y agentes,
         organizadas según lo que evalúan las certificaciones Associate, Developer y Architect y el Partner Badge de Claude Code.
         Nada se envía a ningún servidor.
       </p>
@@ -30,12 +32,12 @@ const groups = computed(() => toolsByCategory.map((c) => ({ ...c, tools: c.tools
     <div class="chips">
       <button class="chip" :class="{ on: !certFilter }" @click="certFilter = ''">Todas</button>
       <button v-for="k in CERT_KEYS" :key="k" class="chip" :class="{ on: certFilter === k }" @click="certFilter = k">
-        {{ CERTS[k].code }} · {{ CERTS[k].name }}
+        <span class="dot" :class="CERTS[k].color" />{{ CERTS[k].code }} · {{ CERTS[k].name }}
       </button>
     </div>
 
     <template v-if="favTools.length">
-      <div class="sec-title">★ Favoritos</div>
+      <div class="sec-title">Favoritos</div>
       <div class="cards"><ToolCard v-for="t in favTools" :key="t.path" :tool="t" /></div>
     </template>
 
@@ -44,10 +46,5 @@ const groups = computed(() => toolsByCategory.map((c) => ({ ...c, tools: c.tools
       <div class="cards"><ToolCard v-for="t in g.tools" :key="t.path" :tool="t" /></div>
     </template>
     <div v-if="!groups.length" class="empty">Ninguna herramienta coincide con la búsqueda.</div>
-
-    <footer>
-      Proyecto independiente, no afiliado ni respaldado por Anthropic. “Claude” y “Claude Code” son marcas de Anthropic.
-      Precios y datos de exámenes de fuentes públicas a noviembre 2026: verificalos en la documentación oficial.
-    </footer>
   </div>
 </template>
