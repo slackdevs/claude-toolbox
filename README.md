@@ -27,7 +27,7 @@ Hereda el sistema de [slackdevs.com](https://slackdevs.com) (“Literary Cyber-M
 
 - [Vue 3](https://vuejs.org) + `<script setup>` + TypeScript
 - [Vite](https://vite.dev)
-- [Vue Router](https://router.vuejs.org) (hash history, compatible con GitHub Pages)
+- [Vue Router](https://router.vuejs.org) (history real: `/tools/costos/`; cada ruta tiene su HTML estático para SEO)
 - Sin librería de UI: estilos propios en `src/styles/main.css` (solo tema oscuro, como el sitio principal)
 
 ## Desarrollo
@@ -111,7 +111,19 @@ La interfaz está en **español e inglés**. El botón `ES / EN` del header camb
 
 `legacy/standalone.html` conserva la versión 0.1 en un solo archivo HTML.
 
-Si publicás en un dominio propio (por ejemplo `tools.slackdevs.com`), actualizá las URLs absolutas de `og:url`, `og:image` y `twitter:image` en `index.html`.
+## SEO y LLMs
+
+`scripts/seo.ts` es un plugin de Vite que corre al final de `npm run build` y, a partir del registro de herramientas, genera en `dist/`:
+
+- `<herramienta>/index.html`: title, description, canonical, Open Graph, JSON-LD (`WebApplication` + `BreadcrumbList`) y contenido legible sin JavaScript.
+- `index.html` con JSON-LD `WebSite` + `ItemList`, y `404.html` (fallback de GitHub Pages, `noindex`).
+- `sitemap.xml`, `robots.txt`, `llms.txt` y `llms-full.txt` ([llmstxt.org](https://llmstxt.org)).
+
+Una herramienta nueva aparece en todos automáticamente. Los enlaces viejos con hash (`#/costos`) redirigen a la ruta real.
+
+La URL pública vive en `BRAND.tools` (`src/lib/brand.ts`) y define el `base` de Vite. Si publicás en un dominio propio (por ejemplo `tools.slackdevs.com`), cambiala ahí y en las URLs absolutas de `og:image`, `twitter:image`, sitemap y llms.txt de `index.html`.
+
+Buscadores y crawlers de IA sólo leen `robots.txt` en la raíz del dominio: en `slackdevs.github.io/tools/` no se usa, así que enviá `sitemap.xml` a Google Search Console y Bing Webmaster Tools. Con un dominio propio, `robots.txt` y `llms.txt` quedan en la raíz y funcionan solos.
 
 ## Aviso
 
