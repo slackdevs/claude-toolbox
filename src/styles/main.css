@@ -385,6 +385,39 @@ footer.site-footer .brand-line { color: var(--color-primary); }
 }
 .toast.show { opacity: 1; transform: translateX(-50%); }
 
+/* ---------- Modal "Acerca de / beta" ---------- */
+.beta-pill { cursor: pointer; flex: none; transition: box-shadow var(--transition-fast); }
+.beta-pill:hover { box-shadow: 0 0 12px var(--color-primary-dim); }
+.about-modal {
+  width: min(560px, calc(100vw - 28px)); max-height: calc(100vh - 28px);
+  padding: 0; overflow: auto;
+  background: var(--color-bg-card); color: var(--color-text-body);
+  border: 1px solid var(--border-accent); border-radius: var(--radius-lg);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 30px var(--color-primary-dim);
+}
+.about-modal::backdrop { background: rgba(9, 10, 15, 0.78); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.about-modal[open] { animation: about-in 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+@keyframes about-in { from { opacity: 0; transform: translateY(10px); } }
+.about-body { position: relative; padding: 24px 26px 20px; }
+.about-body h2 { margin: 12px 0 4px; padding-right: 30px; font-family: var(--font-serif); font-size: 1.6rem; line-height: 1.2; color: var(--color-text-main); }
+.about-body h3 { margin: 18px 0 6px; font: 700 0.7rem var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-primary); }
+.about-body p { margin: 0 0 8px; }
+.about-body ul { margin: 8px 0 12px; padding-left: 18px; color: var(--color-text-muted); font-size: 13px; }
+.about-body li { margin-bottom: 4px; }
+.about-body li::marker { color: var(--color-tertiary); }
+.about-x {
+  position: absolute; top: 14px; right: 14px; width: 30px; height: 30px;
+  background: none; border: 1px solid transparent; border-radius: var(--radius-sm);
+  color: var(--color-text-faint); font-size: 14px; cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.about-x:hover { color: var(--color-primary); border-color: var(--border-card); }
+.about-foot {
+  display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 14px;
+  margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border-subtle);
+}
+.about-foot label.chk { cursor: pointer; color: var(--color-text-muted); }
+
 .fade-enter-active, .fade-leave-active { transition: opacity .12s; }
 .fade-enter-from, .fade-leave-to { opacity: 0; }
 

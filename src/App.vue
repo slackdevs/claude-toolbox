@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import AboutModal from '@/components/AboutModal.vue';
 import AppSidebar from '@/components/AppSidebar.vue';
 import CertTags from '@/components/CertTags.vue';
 import FavoriteButton from '@/components/FavoriteButton.vue';
-import { query, sidebarOpen } from '@/composables/useAppState';
+import { aboutOpen, query, sidebarOpen } from '@/composables/useAppState';
 import { toastMessage, toastVisible } from '@/composables/useToast';
 import { locale, toggleLocale, tr, ui } from '@/i18n';
 import { BRAND } from '@/lib/brand';
@@ -53,6 +54,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey));
         <span class="brand-role-tag">SlackDevs · Tools</span>
       </div>
     </RouterLink>
+    <button class="pill amber beta-pill" type="button" :title="ui.about" :aria-label="ui.about" @click="aboutOpen = true">Beta</button>
     <div class="search">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
       <input ref="searchInput" v-model="query" type="search" :placeholder="ui.search" autocomplete="off" @input="onSearch">
@@ -104,6 +106,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey));
       <footer class="site-footer">
         <div class="brand-line">CLAUDE TOOLBOX // SLACKDEVS.COM</div>
         <div>
+          <a href="#" @click.prevent="aboutOpen = true">{{ ui.about.toUpperCase() }}</a> ·
           <a :href="site" target="_blank" rel="noopener">SLACKDEVS.COM</a> ·
           <a :href="BRAND.github" target="_blank" rel="noopener">GITHUB</a> ·
           <a :href="BRAND.legal.tos" target="_blank" rel="noopener">{{ ui.terms }}</a> ·
@@ -117,5 +120,6 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey));
     </main>
   </div>
 
+  <AboutModal />
   <div class="toast" :class="{ show: toastVisible }">{{ toastMessage }}</div>
 </template>
