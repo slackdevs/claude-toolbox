@@ -27,7 +27,7 @@ Hereda el sistema de [slackdevs.com](https://slackdevs.com) (“Literary Cyber-M
 
 - [Vue 3](https://vuejs.org) + `<script setup>` + TypeScript
 - [Vite](https://vite.dev)
-- [Vue Router](https://router.vuejs.org) (history real: `/tools/costos/`; cada ruta tiene su HTML estático para SEO)
+- [Vue Router](https://router.vuejs.org) (history real: `/costos/`; cada ruta tiene su HTML estático para SEO)
 - Sin librería de UI: estilos propios en `src/styles/main.css` (solo tema oscuro, como el sitio principal)
 
 ## Desarrollo
@@ -107,7 +107,7 @@ La interfaz está en **español e inglés**. El botón `ES / EN` del header camb
 
 ## Deploy
 
-`.github/workflows/deploy.yml` construye y publica en GitHub Pages en cada push a `main`. Activalo en **Settings → Pages → Source: GitHub Actions**.
+Se publica en Hostinger como app Vite en <https://claudetoolbox.slackdevs.com/>: cada push a `main` corre `npm run build` y sirve `dist/` en la raíz del dominio. Los assets se piden con ruta absoluta según el `base`, así que `BRAND.tools` tiene que coincidir con la URL donde realmente se sirve el sitio (si no, todos los assets dan 404).
 
 `legacy/standalone.html` conserva la versión 0.1 en un solo archivo HTML.
 
@@ -116,14 +116,14 @@ La interfaz está en **español e inglés**. El botón `ES / EN` del header camb
 `scripts/seo.ts` es un plugin de Vite que corre al final de `npm run build` y, a partir del registro de herramientas, genera en `dist/`:
 
 - `<herramienta>/index.html`: title, description, canonical, Open Graph, JSON-LD (`WebApplication` + `BreadcrumbList`) y contenido legible sin JavaScript.
-- `index.html` con JSON-LD `WebSite` + `ItemList`, y `404.html` (fallback de GitHub Pages, `noindex`).
+- `index.html` con JSON-LD `WebSite` + `ItemList`, y `404.html` (`noindex`).
 - `sitemap.xml`, `robots.txt`, `llms.txt` y `llms-full.txt` ([llmstxt.org](https://llmstxt.org)).
 
 Una herramienta nueva aparece en todos automáticamente. Los enlaces viejos con hash (`#/costos`) redirigen a la ruta real.
 
-La URL pública vive en `BRAND.tools` (`src/lib/brand.ts`) y define el `base` de Vite. Si publicás en un dominio propio (por ejemplo `tools.slackdevs.com`), cambiala ahí y en las URLs absolutas de `og:image`, `twitter:image`, sitemap y llms.txt de `index.html`.
+La URL pública vive en `BRAND.tools` (`src/lib/brand.ts`) y define el `base` de Vite. Si cambia el dominio o pasa a una subcarpeta, cambiala ahí y en las URLs absolutas de `og:image`, `twitter:image`, sitemap y llms.txt de `index.html`.
 
-Buscadores y crawlers de IA sólo leen `robots.txt` en la raíz del dominio: en `slackdevs.github.io/tools/` no se usa, así que enviá `sitemap.xml` a Google Search Console y Bing Webmaster Tools. Con un dominio propio, `robots.txt` y `llms.txt` quedan en la raíz y funcionan solos.
+Como el sitio se sirve en la raíz del dominio, `robots.txt` y `llms.txt` quedan donde buscadores y crawlers de IA los buscan. Conviene igual enviar `sitemap.xml` a Google Search Console y Bing Webmaster Tools.
 
 ## Aviso
 

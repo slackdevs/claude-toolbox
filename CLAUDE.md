@@ -4,7 +4,7 @@ Guía para Claude Code en este repositorio.
 
 ## Qué es
 
-Claude Toolbox: colección de herramientas client-side (estilo it-tools) para profesionales de Claude, la Claude API y Claude Code, de SlackDevs (Sebastián Larrauri). UI en español. Vue 3 + `<script setup>` + TypeScript + Vite + Vue Router (history real con base `/tools/`). Sin librería de UI.
+Claude Toolbox: colección de herramientas client-side (estilo it-tools) para profesionales de Claude, la Claude API y Claude Code, de SlackDevs (Sebastián Larrauri). UI en español. Vue 3 + `<script setup>` + TypeScript + Vite + Vue Router (history real; el `base` sale de `BRAND.tools`, hoy `/`). Sin librería de UI.
 
 ## Comandos
 

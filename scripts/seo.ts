@@ -1,7 +1,7 @@
 // Plugin de build para SEO y LLMs. Corre sólo en `vite build`, después de generar dist/:
 // - dist/<herramienta>/index.html: HTML estático por herramienta (title, description, canonical, OG, JSON-LD
 //   y contenido legible sin JS). Vue lo reemplaza al montar.
-// - dist/index.html (home) y dist/404.html (fallback SPA de GitHub Pages, noindex).
+// - dist/index.html (home) y dist/404.html (fallback para rutas desconocidas, noindex).
 // - sitemap.xml, robots.txt, llms.txt y llms-full.txt (https://llmstxt.org).
 // Los datos salen del mismo registro de herramientas que usa la app: no hay que mantener listas aparte.
 import { readFile, mkdir, writeFile } from 'node:fs/promises';
@@ -94,7 +94,7 @@ export function seo(): Plugin {
       const homeBody = `<h1>Herramientas para profesionales de Claude</h1><p>${esc(HOME.description)}</p><p lang="en">${esc(HOME.descriptionEn)}</p>${toolIndex}`;
       await writeFile(join(outDir, 'index.html'), render(head({ ...HOME, url: site, jsonld: homeLd }), homeBody));
 
-      // 404: GitHub Pages lo sirve para rutas desconocidas; la SPA muestra su propio NotFound.
+      // 404: fallback para rutas desconocidas (si el hosting lo sirve); la SPA muestra su propio NotFound.
       await writeFile(join(outDir, '404.html'), render(head({ ...HOME, title: `404 — ${SITE_NAME}`, url: site, jsonld: [], noindex: true }), `<h1>404</h1>${toolIndex}`));
 
       // Una página por herramienta
