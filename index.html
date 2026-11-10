@@ -3,30 +3,42 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- El bloque seo lo reescribe scripts/seo.ts en el build, una versión por página (title, description, canonical, OG, JSON-LD). -->
+  <!--seo-->
   <title>Claude Toolbox · SlackDevs — herramientas para profesionales de Claude</title>
   <meta name="description" content="Herramientas en el navegador para profesionales de Claude, la Claude API y Claude Code: costos, prompts, MCP, hooks, subagentes y preparación para las certificaciones de Anthropic.">
-  <meta name="author" content="Sebastián Larrauri">
-  <meta name="theme-color" content="#090a0f">
-
-  <!-- Open Graph / Twitter (si usás un dominio propio, actualizá las URLs absolutas) -->
-  <meta property="og:type" content="website">
-  <meta property="og:locale" content="es_AR">
-  <meta property="og:site_name" content="SlackDevs">
-  <meta property="og:url" content="https://slackdevs.github.io/tools/">
   <meta property="og:title" content="Claude Toolbox — herramientas para profesionales de Claude">
   <meta property="og:description" content="Costos de API, prompts, MCP, Claude Code y agentes. Alineado a las certificaciones de Anthropic. 100% en tu navegador.">
+  <!--/seo-->
+  <meta name="author" content="Sebastián Larrauri">
+  <meta name="application-name" content="Claude Toolbox">
+  <meta name="keywords" content="Claude, Claude API, Claude Code, Anthropic, MCP, prompt engineering, prompt caching, tokens, costos, hooks, subagentes, skills, CLAUDE.md, certificación, CCDV-F, CCAR-F, CCAO-F">
+  <meta name="theme-color" content="#090a0f">
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_AR">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:site_name" content="SlackDevs">
   <meta property="og:image" content="https://slackdevs.github.io/tools/og-tools.jpg">
+  <meta property="og:image:alt" content="Claude Toolbox de SlackDevs">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@aislackdevs">
   <meta name="twitter:creator" content="@aislackdevs">
-  <meta name="twitter:title" content="Claude Toolbox — herramientas para profesionales de Claude">
-  <meta name="twitter:description" content="Costos de API, prompts, MCP, Claude Code y agentes. 100% en tu navegador.">
   <meta name="twitter:image" content="https://slackdevs.github.io/tools/og-tools.jpg">
 
-  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="sitemap" type="application/xml" href="https://slackdevs.github.io/tools/sitemap.xml">
+  <link rel="alternate" type="text/plain" href="https://slackdevs.github.io/tools/llms.txt" title="llms.txt">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <!-- Contenido estático (para crawlers sin JS) mientras carga la app; Vue lo reemplaza al montar. -->
+  <style>
+    body { margin: 0; background: #090a0f; color: #d1d5db; font-family: Inter, system-ui, sans-serif; }
+    .seo-static { max-width: 860px; margin: 0 auto; padding: 32px 16px; line-height: 1.6; }
+    .seo-static a { color: #e5a93c; }
+    .seo-static h1, .seo-static h2 { font-family: 'Playfair Display', serif; }
+  </style>
 </head>
 <body>
   <div id="app"></div>

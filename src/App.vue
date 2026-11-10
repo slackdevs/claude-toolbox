@@ -16,9 +16,16 @@ const searchInput = ref<HTMLInputElement>();
 const tool = computed(() => findTool(String(route.meta.toolPath ?? '')));
 const site = computed(() => (locale.value === 'es' ? BRAND.siteEs : BRAND.siteEn));
 
+const setMeta = (sel: string, attr: string, value: string) => document.querySelector(sel)?.setAttribute(attr, value);
+
+// Mantiene title, description y canonical al navegar dentro de la SPA (el HTML inicial ya los trae de scripts/seo.ts).
 watchEffect(() => {
   document.documentElement.lang = locale.value;
   document.title = tool.value ? `${tr(tool.value.name)} — Claude Toolbox · SlackDevs` : ui.value.docTitle;
+  const url = tool.value ? `${BRAND.tools}${tool.value.path.slice(1)}/` : BRAND.tools;
+  setMeta('meta[name="description"]', 'content', tool.value ? tr(tool.value.description) : ui.value.heroText);
+  setMeta('link[rel="canonical"]', 'href', url);
+  setMeta('meta[property="og:url"]', 'content', url);
 });
 
 function onSearch() {

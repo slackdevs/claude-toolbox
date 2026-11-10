@@ -4,7 +4,7 @@ Guía para Claude Code en este repositorio.
 
 ## Qué es
 
-Claude Toolbox: colección de herramientas client-side (estilo it-tools) para profesionales de Claude, la Claude API y Claude Code, de SlackDevs (Sebastián Larrauri). UI en español. Vue 3 + `<script setup>` + TypeScript + Vite + Vue Router (hash history). Sin librería de UI.
+Claude Toolbox: colección de herramientas client-side (estilo it-tools) para profesionales de Claude, la Claude API y Claude Code, de SlackDevs (Sebastián Larrauri). UI en español. Vue 3 + `<script setup>` + TypeScript + Vite + Vue Router (history real con base `/tools/`). Sin librería de UI.
 
 ## Comandos
 
@@ -20,6 +20,7 @@ npm run script:create:tool -- <nombre>    # nueva herramienta en src/tools/<nomb
 - Categorías en `src/tools/index.ts`; certificaciones (`A`, `D`, `AF`, `AP`, `B`), su color de marca e insignia en `src/lib/certs.ts`.
 - Precios de modelos sólo en `src/lib/models.ts`.
 - Componentes compartidos en `src/components/` (`CodeOutput`, `TabbedCode`, `LintList`, `KpiCard`, ...). `LintList` renderiza HTML: escapá el input del usuario con `esc()`.
+- SEO: `scripts/seo.ts` genera en el build un HTML por herramienta, sitemap, robots y llms.txt desde el registro; la URL pública está en `BRAND.tools`. Bloque `<!--seo-->` de `index.html`: lo reescribe el build.
 - Nada sale del navegador: no agregues llamadas de red ni analytics sin pedirlo.
 
 ## Marca
