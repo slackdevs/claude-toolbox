@@ -328,6 +328,8 @@ input[aria-invalid="true"], select[aria-invalid="true"], textarea[aria-invalid="
   .layout { display: block; }
   main { padding: 0; }
   * { box-shadow: none !important; text-shadow: none !important; }
+  /* Fondos oscuros fijos de main.css (no salen de variables). */
+  .ico, .badge-thumb, .kpi, .out, .pat, .tag, .meta-badge { background: none !important; }
   .cs-layout { display: block; }
   .card { break-inside: avoid; }
   .md-full h2, .md-full h3, .md-full h4 { break-after: avoid; }
