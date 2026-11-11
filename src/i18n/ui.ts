@@ -30,6 +30,18 @@ const es = {
   backHome: 'Volver al inicio',
   review: 'Revisión',
   model: 'Modelo',
+  close: 'Cerrar',
+  retry: 'Reintentar',
+  loading: 'Cargando…',
+  community: 'Comunidad',
+  cheatsheets: 'Cheatsheets',
+  proposals: 'Propuestas',
+  roadmap: 'Roadmap',
+  communityNav: 'Secciones de la comunidad',
+  demoBanner: 'Modo demo: los datos se guardan solo en tu navegador y no se cobra nada.',
+  demoTag: 'Demo',
+  sampleData: 'Datos de ejemplo',
+  provisional: 'provisorio',
 };
 
 export type UiMessages = typeof es;
@@ -65,6 +77,18 @@ const en: UiMessages = {
   backHome: 'Back to home',
   review: 'Review',
   model: 'Model',
+  close: 'Close',
+  retry: 'Retry',
+  loading: 'Loading…',
+  community: 'Community',
+  cheatsheets: 'Cheatsheets',
+  proposals: 'Proposals',
+  roadmap: 'Roadmap',
+  communityNav: 'Community sections',
+  demoBanner: 'Demo mode: data is saved only in your browser and nothing is charged.',
+  demoTag: 'Demo',
+  sampleData: 'Sample data',
+  provisional: 'provisional',
 };
 
 export const UI = { es, en };

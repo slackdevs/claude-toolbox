@@ -15,3 +15,6 @@ export function toggleFavorite(path: string) {
     ? favorites.value.filter((p) => p !== path)
     : [...favorites.value, path];
 }
+
+/** Título dinámico de la página actual; vacío = usar el de la ruta. Ver usePageTitle. */
+export const pageTitle = ref('');

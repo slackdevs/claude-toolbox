@@ -10,6 +10,10 @@ const favTools = computed(() => favorites.value.map(findTool).filter((t) => !!t)
 <template>
   <aside :class="{ open: sidebarOpen }" @click="sidebarOpen = false">
     <RouterLink to="/" exact-active-class="on">⌂ {{ ui.home }}</RouterLink>
+    <h4>{{ ui.community }}</h4>
+    <RouterLink to="/cheatsheets" active-class="on"><span class="nav-ico">¶</span>{{ ui.cheatsheets }}</RouterLink>
+    <RouterLink to="/propuestas" active-class="on"><span class="nav-ico">▲</span>{{ ui.proposals }}</RouterLink>
+    <RouterLink to="/roadmap" active-class="on"><span class="nav-ico">◆</span>{{ ui.roadmap }}</RouterLink>
     <template v-if="favTools.length">
       <h4>{{ ui.favorites }}</h4>
       <RouterLink v-for="t in favTools" :key="t.path" :to="t.path" active-class="on">★ {{ tr(t.name) }}</RouterLink>

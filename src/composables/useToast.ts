@@ -5,11 +5,12 @@ export const toastMessage = ref('');
 export const toastVisible = ref(false);
 let handle: ReturnType<typeof setTimeout> | undefined;
 
-export function toast(message: string) {
+/** `ms`: cuánto queda visible. Los mensajes de error necesitan más tiempo que un "¡Copiado!". */
+export function toast(message: string, ms = 1400) {
   toastMessage.value = message;
   toastVisible.value = true;
   clearTimeout(handle);
-  handle = setTimeout(() => (toastVisible.value = false), 1400);
+  handle = setTimeout(() => (toastVisible.value = false), ms);
 }
 
 export async function copyText(text: string) {
