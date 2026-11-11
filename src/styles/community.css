@@ -1,0 +1,54 @@
+/* ==========================================================================
+   Páginas nuevas: cheatsheets y capa comunitaria (propuestas, roadmap, admin).
+   Sólo variables de main.css: nada de colores sueltos.
+   ========================================================================== */
+
+/* ---------- Navegación ---------- */
+.header-nav { display: flex; align-items: center; gap: 2px; flex: none; }
+.header-nav a {
+  padding: 0.45rem 0.7rem; border-radius: var(--radius-sm); border: 1px solid transparent;
+  color: var(--color-text-muted); white-space: nowrap;
+  font-family: var(--font-mono); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em;
+  transition: all var(--transition-fast);
+}
+.header-nav a:hover { color: var(--color-text-main); background: var(--color-bg-card); }
+.header-nav a.on { color: var(--color-primary); background: var(--color-primary-dim); border-color: var(--border-accent); }
+aside .nav-ico { width: 18px; text-align: center; color: var(--acc); }
+
+/* Foco visible con teclado en los controles de las páginas nuevas y la navegación. */
+.header-nav a:focus-visible, aside a:focus-visible, main a:focus-visible, main button:focus-visible, dialog button:focus-visible {
+  outline: 2px solid var(--color-primary); outline-offset: 2px;
+}
+
+/* ---------- Cabecera de página ---------- */
+.page-head-text { flex: 1; min-width: 0; }
+.page-head-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+
+/* ---------- Banner de modo demo ---------- */
+.demo-banner {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin: 0 0 18px; padding: 8px 12px;
+  border: 1px dashed var(--border-accent); border-radius: var(--radius-sm);
+  background: var(--color-primary-dim); color: var(--color-text-body); font-size: 12.5px;
+}
+
+/* ---------- Modal ---------- */
+.dialog-title { margin-top: 0 !important; }
+
+/* ---------- Listas simples ---------- */
+.plain-list { list-style: none; margin: 14px 0 0; padding: 0; }
+.plain-list li {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  padding: 10px 0; border-bottom: 1px solid var(--border-subtle);
+}
+.plain-list li a { flex: 1; min-width: 200px; }
+
+/* El header ya va justo: por debajo de este ancho los accesos quedan sólo en el menú lateral. */
+@media (max-width: 1320px) {
+  .header-nav { display: none; }
+}
+
+@media (max-width: 900px) {
+  .page-head { flex-wrap: wrap; }
+  .page-head-actions { width: 100%; justify-content: flex-start; }
+}

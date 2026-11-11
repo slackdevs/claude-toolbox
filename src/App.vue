@@ -5,6 +5,7 @@ import AboutModal from '@/components/AboutModal.vue';
 import AppSidebar from '@/components/AppSidebar.vue';
 import CertTags from '@/components/CertTags.vue';
 import FavoriteButton from '@/components/FavoriteButton.vue';
+import DemoBanner from '@/community/components/DemoBanner.vue';
 import { aboutOpen, query, sidebarOpen } from '@/composables/useAppState';
 import { toastMessage, toastVisible } from '@/composables/useToast';
 import { locale, toggleLocale, tr, ui } from '@/i18n';
@@ -17,16 +18,34 @@ const searchInput = ref<HTMLInputElement>();
 const tool = computed(() => findTool(String(route.meta.toolPath ?? '')));
 const site = computed(() => (locale.value === 'es' ? BRAND.siteEs : BRAND.siteEn));
 
+// Título y descripción de la página actual: de la herramienta, o de route.meta en las páginas nuevas (cheatsheets, comunidad).
+const page = computed(() => {
+  if (tool.value) return { title: tr(tool.value.name), description: tr(tool.value.description) };
+  const { title, description } = route.meta;
+  return title ? { title: tr(title), description: description ? tr(description) : ui.value.heroText } : null;
+});
+
 const setMeta = (sel: string, attr: string, value: string) => document.querySelector(sel)?.setAttribute(attr, value);
 
-// Mantiene title, description y canonical al navegar dentro de la SPA (el HTML inicial ya los trae de scripts/seo.ts).
+function setRobots(noindex: boolean) {
+  let el = document.querySelector<HTMLMetaElement>('meta[name="robots"]');
+  if (!el) {
+    if (!noindex) return;
+    el = document.head.appendChild(Object.assign(document.createElement('meta'), { name: 'robots' }));
+  }
+  el.content = noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large';
+}
+
+// Mantiene title, description, canonical y robots al navegar dentro de la SPA (el HTML inicial ya los trae de scripts/seo.ts).
 watchEffect(() => {
   document.documentElement.lang = locale.value;
-  document.title = tool.value ? `${tr(tool.value.name)} — Claude Toolbox · SlackDevs` : ui.value.docTitle;
-  const url = tool.value ? `${BRAND.tools}${tool.value.path.slice(1)}/` : BRAND.tools;
-  setMeta('meta[name="description"]', 'content', tool.value ? tr(tool.value.description) : ui.value.heroText);
+  document.title = page.value ? `${page.value.title} — Claude Toolbox · SlackDevs` : ui.value.docTitle;
+  const path = route.path.replace(/^\/+|\/+$/g, '');
+  const url = page.value && path ? `${BRAND.tools}${path}/` : BRAND.tools;
+  setMeta('meta[name="description"]', 'content', page.value?.description ?? ui.value.heroText);
   setMeta('link[rel="canonical"]', 'href', url);
   setMeta('meta[property="og:url"]', 'content', url);
+  setRobots(!!route.meta.noindex || route.name === 'not-found');
 });
 
 function onSearch() {
@@ -55,6 +74,12 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey));
       </div>
     </RouterLink>
     <button class="pill amber beta-pill" type="button" :title="ui.about" :aria-label="ui.about" @click="aboutOpen = true">Beta</button>
+    <!-- En pantallas chicas estos accesos viven en el menú lateral (sección "Comunidad"). -->
+    <nav class="header-nav" :aria-label="ui.communityNav">
+      <RouterLink to="/cheatsheets" active-class="on">{{ ui.cheatsheets }}</RouterLink>
+      <RouterLink to="/propuestas" active-class="on">{{ ui.proposals }}</RouterLink>
+      <RouterLink to="/roadmap" active-class="on">{{ ui.roadmap }}</RouterLink>
+    </nav>
     <div class="search">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
       <input ref="searchInput" v-model="query" type="search" :placeholder="ui.search" autocomplete="off" @input="onSearch">
@@ -96,6 +121,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey));
         </div>
         <FavoriteButton :path="tool.path" inline />
       </div>
+      <DemoBanner v-if="route.meta.community" />
       <!-- La key incluye el idioma: al cambiarlo, la herramienta se remonta con sus valores de ejemplo traducidos. -->
       <RouterView v-slot="{ Component }">
         <Transition name="fade" mode="out-in">
