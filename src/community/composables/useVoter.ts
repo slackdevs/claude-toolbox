@@ -56,6 +56,12 @@ export async function onVerified(s: VoterSession) {
   bumpData(); // "mi voto" cambia en todas las propuestas a la vista
 }
 
+/** Tras restablecer los datos de la demo: la sesión guardada ya no existe. */
+export function resetSession() {
+  session.value = null;
+  loaded = false;
+}
+
 /** "Cambiar email": cierra la sesión en este navegador; los votos quedan. */
 export async function signOut() {
   await api.signOut();

@@ -152,6 +152,35 @@ a.btn.ghost:hover { color: var(--color-primary); }
 .supporters time { margin-left: auto; color: var(--color-text-faint); font-size: 12px; }
 .funding { margin-top: 10px; }
 
+/* ---------- Roadmap ---------- */
+.roadmap-intro { max-width: 860px; color: var(--color-text-muted); margin: 0 0 18px; }
+.roadmap { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: start; }
+.roadmap-col { display: flex; flex-direction: column; gap: 10px; padding: 14px; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: var(--color-bg-surface); min-width: 0; }
+.roadmap-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0; font-size: 1rem; }
+.roadmap-head small { font: 600 11px var(--font-mono); color: var(--color-text-faint); }
+.roadmap-col .note, .roadmap-col .empty { margin: 0; }
+.roadmap-col .empty { padding: 16px; }
+
+/* ---------- Admin ---------- */
+.switch input { width: 20px; height: 20px; }
+.section-note { margin: 0 0 12px; }
+.admin-row { display: flex; flex-direction: column; gap: 10px; }
+.admin-row .tags { margin-top: 0; }
+.admin-form { padding-top: 10px; border-top: 1px solid var(--border-subtle); }
+.admin-form .btns { margin: 10px 0 0; }
+.admin-details summary { cursor: pointer; color: var(--color-text-muted); padding: 4px 0; }
+.admin-details[open] summary { margin-bottom: 8px; }
+.admin-details h4 { margin: 12px 0 6px; font: 700 0.7rem var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-tertiary); }
+.admin-filter { max-width: 260px; margin-bottom: 12px; }
+h2.sec-title { font-weight: 400; }
+.md-table { overflow-x: auto; margin: 0 0 12px; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); }
+.md-table table { min-width: 480px; }
+.md-table tr:last-child td { border-bottom: 0; }
+
+@media (max-width: 1100px) {
+  .roadmap { grid-template-columns: 1fr; }
+}
+
 /* Skeletons */
 .sk { display: block; border-radius: var(--radius-sm); background: linear-gradient(90deg, var(--color-bg-input) 25%, var(--color-bg-card-hover) 50%, var(--color-bg-input) 75%); background-size: 200% 100%; animation: sk-shimmer 1.4s linear infinite; }
 .sk-box { width: 56px; height: 44px; }
