@@ -6,6 +6,7 @@ import { parseMarkdown, plainText } from '@/lib/markdown';
 import { fmtDate, fmtHours, toolName } from '../format';
 import { TYPE_LABELS } from '../labels';
 import type { ProposalSummary } from '../types';
+import DonateButtons from './DonateButtons.vue';
 import LangTag from './LangTag.vue';
 import ScoreBreakdown from './ScoreBreakdown.vue';
 import StatusBadge from './StatusBadge.vue';
@@ -47,7 +48,7 @@ const excerpt = computed(() => plainText(parseMarkdown(props.proposal.descriptio
         <span v-else-if="proposal.status === 'received'">{{ t.pending }}</span>
         <time v-if="!compact" :datetime="proposal.createdAt">{{ fmtDate(proposal.createdAt) }}</time>
       </div>
-      <slot name="actions" />
+      <div v-if="!readonly && proposal.status === 'open'"><DonateButtons :proposal="proposal" compact /></div>
     </div>
   </article>
 </template>

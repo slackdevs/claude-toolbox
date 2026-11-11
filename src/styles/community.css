@@ -123,6 +123,35 @@ a.btn.ghost:hover { color: var(--color-primary); }
 .consent { align-items: flex-start !important; margin: 0 0 10px; font-size: 13px !important; }
 .consent input { margin-top: 3px; flex: none; min-width: 18px; min-height: 18px; }
 
+/* Donaciones */
+.donate { display: flex; flex-direction: column; gap: 8px; margin: 14px 0 8px; }
+.donate-btn {
+  display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 8px 12px; text-align: left; cursor: pointer;
+  background: var(--color-bg-input); border: 1px solid var(--border-card); border-radius: var(--radius-sm); color: var(--color-text-body);
+  transition: all var(--transition-fast);
+}
+.donate-btn:hover:not(:disabled) { border-color: var(--color-primary); background: var(--color-primary-dim); }
+.donate-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.donate-ico { font-size: 22px; flex: none; }
+.donate-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.donate-text b { font: 700 12.5px var(--font-mono); color: var(--color-text-main); }
+.donate-text span { font-size: 12px; color: var(--color-text-muted); }
+.donate-price { display: flex; flex-direction: column; align-items: flex-end; font: 700 14px var(--font-mono); color: var(--color-primary); white-space: nowrap; }
+.donate-price small { font: 600 9.5px var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-text-faint); }
+.donate-compact { min-height: 32px; }
+.private-dev { margin-top: 12px; }
+.summary { margin: 0 0 12px; padding: 12px; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); background: var(--color-bg-input); }
+.terms { margin: 0 0 14px !important; }
+.pay-status { display: flex; align-items: center; gap: 8px; color: var(--color-tertiary); font: 600 12px var(--font-mono); }
+.spinner { width: 14px; height: 14px; flex: none; border: 2px solid var(--border-cyan); border-top-color: var(--color-tertiary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.btn.paypal { text-transform: none; letter-spacing: 0.02em; }
+.thanks-ico { font-size: 44px; margin: 0 0 6px !important; line-height: 1; }
+.supporters { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+.supporters li { display: flex; align-items: center; gap: 8px; }
+.supporters time { margin-left: auto; color: var(--color-text-faint); font-size: 12px; }
+.funding { margin-top: 10px; }
+
 /* Skeletons */
 .sk { display: block; border-radius: var(--radius-sm); background: linear-gradient(90deg, var(--color-bg-input) 25%, var(--color-bg-card-hover) 50%, var(--color-bg-input) 75%); background-size: 200% 100%; animation: sk-shimmer 1.4s linear infinite; }
 .sk-box { width: 56px; height: 44px; }

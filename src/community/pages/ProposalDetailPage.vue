@@ -7,6 +7,7 @@ import PageHead from '@/components/PageHead.vue';
 import { usePageTitle } from '@/composables/usePageTitle';
 import { copyText } from '@/composables/useToast';
 import { tr, ui, useMessages } from '@/i18n';
+import DonateButtons from '../components/DonateButtons.vue';
 import LangTag from '../components/LangTag.vue';
 import LifecycleTimeline from '../components/LifecycleTimeline.vue';
 import ScoreBreakdown from '../components/ScoreBreakdown.vue';
@@ -15,8 +16,8 @@ import VoteControl from '../components/VoteControl.vue';
 import VoterBar from '../components/VoterBar.vue';
 import { useProposal } from '../composables/useProposal';
 import { COMMUNITY_CONFIG } from '../config';
-import { fmtDate, fmtHours, fmtMoney, toolName } from '../format';
-import { ERROR_LABELS, LOCKED_REASON, TYPE_LABELS } from '../labels';
+import { fmtDate, fmtHours, fmtMinutes, fmtMoney, toolName } from '../format';
+import { ERROR_LABELS, LOCKED_REASON, TIER_LABELS, TYPE_LABELS } from '../labels';
 
 const t = useMessages({
   es: {
@@ -27,6 +28,9 @@ const t = useMessages({
     creditTitle: 'Tu aporte queda como crédito',
     credit: (amount: string) => `Esta propuesta recibió ${amount} en donaciones. No se reembolsan: quedan como crédito para contratar este desarrollo de forma privada con Sebastián, con descuento de lo aportado.`,
     privateDev: 'Consultar desarrollo privado', notFoundBack: 'Volver a las propuestas',
+    donateNote: 'Cada consumo suma al puntaje. No se reembolsa: si la propuesta no avanza, queda como crédito para un desarrollo privado.',
+    supporters: 'Apoyos públicos', funding: 'Donado frente al tiempo estimado',
+    fundingText: (donated: string, estimate: string) => `Donado ≈ ${donated} de ${estimate} estimadas (orientativo).`,
   },
   en: {
     back: '← All proposals', share: 'Share', description: 'Description', score: 'Score', participate: 'Vote and donate',
@@ -36,6 +40,9 @@ const t = useMessages({
     creditTitle: 'Your contribution becomes credit',
     credit: (amount: string) => `This proposal received ${amount} in donations. They are not refunded: they become credit towards hiring this development privately with Sebastián, discounting what was contributed.`,
     privateDev: 'Ask about private development', notFoundBack: 'Back to proposals',
+    donateNote: 'Each donation adds to the score. It is not refunded: if the proposal does not move forward, it becomes credit towards a private development.',
+    supporters: 'Public supporters', funding: 'Donated versus estimated time',
+    fundingText: (donated: string, estimate: string) => `Donated ≈ ${donated} of an estimated ${estimate} (approximate).`,
   },
 });
 
@@ -46,6 +53,9 @@ usePageTitle(() => p.value?.title);
 
 const closed = computed(() => p.value?.status === 'discarded' || p.value?.status === 'duplicate');
 const locked = computed(() => (p.value ? LOCKED_REASON[p.value.status] : null));
+
+// Barra "donado vs. estimado" (detrás de COMMUNITY_CONFIG.showFundingProgress): usa el máximo del rango orientativo.
+const fundedPct = computed(() => (p.value?.estimateHours ? Math.min(100, Math.round((p.value.donatedMinutes.max / (p.value.estimateHours * 60)) * 100)) : 0));
 
 const share = () => copyText(location.href);
 </script>
@@ -142,7 +152,27 @@ const share = () => copyText(location.href);
             <template v-else>
               <VoteControl :proposal="p" row @update="patch" />
               <VoterBar />
+              <DonateButtons :proposal="p" />
+              <p class="note">{{ t.donateNote }}</p>
+              <div v-if="COMMUNITY_CONFIG.showFundingProgress && p.estimateHours" class="funding">
+                <div class="progress" role="progressbar" :aria-label="t.funding" aria-valuemin="0" aria-valuemax="100" :aria-valuenow="fundedPct">
+                  <div :style="{ width: fundedPct + '%' }" />
+                </div>
+                <p class="note">{{ t.fundingText(fmtMinutes(p.donatedMinutes.min, p.donatedMinutes.max), fmtHours(p.estimateHours)) }}</p>
+              </div>
             </template>
+            <a class="btn ghost sm private-dev" :href="COMMUNITY_CONFIG.privateDevUrl" target="_blank" rel="noopener">{{ t.privateDev }}</a>
+          </section>
+
+          <section v-if="p.supporters.length" class="card">
+            <h3>{{ t.supporters }}</h3>
+            <ul class="supporters">
+              <li v-for="(s, i) in p.supporters" :key="i">
+                <span aria-hidden="true">{{ TIER_LABELS[s.tier].icon }}</span> <b>{{ s.displayName }}</b>
+                <span class="sr-only">{{ TIER_LABELS[s.tier].button }}</span>
+                <time :datetime="s.createdAt">{{ fmtDate(s.createdAt) }}</time>
+              </li>
+            </ul>
           </section>
         </div>
       </div>
