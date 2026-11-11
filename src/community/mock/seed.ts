@@ -137,7 +137,7 @@ export function seed(): { proposals: Proposal[]; votes: Vote[]; donations: Donat
       id: s.id, type: s.type, title: s.title, description: s.description, lang: 'es', certs: s.certs, toolPath: s.toolPath,
       status: s.status, estimateHours: s.estimateHours, statusReason: s.statusReason, duplicateOf: s.duplicateOf,
       createdAt: day(s.created), updatedAt: day(s.updated ?? s.created), author: AUTHOR,
-      links: s.publishedPath ? { publishedPath: s.publishedPath } : undefined,
+      links: s.publishedPath ? { publishedPath: s.publishedPath } : undefined, sample: true,
     });
 
     // Cada propuesta arranca en un votante distinto para que no voten siempre los mismos.

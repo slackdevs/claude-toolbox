@@ -4,7 +4,7 @@ import type { DemoSettings, Donation, Proposal, Vote, Voter } from '../types';
 import { seed } from './seed';
 
 export const STORE_KEY = 'ct-community-v1';
-const VERSION = 1;
+const VERSION = 2;
 
 export interface StoreData {
   version: number;

@@ -49,6 +49,8 @@ export interface Proposal {
   updatedAt: string;
   author: ProposalAuthor;
   links?: ProposalLinks;
+  /** Dato de ejemplo precargado en el modo demo (sólo lo marca el mock). */
+  sample?: boolean;
 }
 
 export interface Vote {

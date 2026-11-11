@@ -34,5 +34,6 @@ export const router = createRouter({
     ...communityRoutes,
     { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFound },
   ],
-  scrollBehavior: () => ({ top: 0 }),
+  // Cambiar sólo la query (filtros de un listado) no mueve el scroll.
+  scrollBehavior: (to, from) => (to.path === from.path ? false : { top: 0 }),
 });

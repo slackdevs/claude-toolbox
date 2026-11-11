@@ -62,3 +62,14 @@ export const ERROR_LABELS: Record<CommunityErrorCode, Localized> = {
   unverified: { es: 'Verificá tu email para continuar.', en: 'Verify your email to continue.' },
   not_implemented: { es: 'La API real todavía no está implementada.', en: 'The real API is not implemented yet.' },
 };
+
+/** Por qué no se puede votar ni donar en cada estado (null = se puede). */
+export const LOCKED_REASON: Record<ProposalStatus, Localized | null> = {
+  received: { es: 'Está en revisión: se va a poder votar y donar cuando Sebastián le asigne un tiempo estimado y la abra.', en: 'Under review: voting and donations open once Sebastián assigns an estimated time and opens it.' },
+  open: null,
+  planned: { es: 'La votación cerró: ya está planificada en el roadmap.', en: 'Voting is closed: it is already planned on the roadmap.' },
+  in_progress: { es: 'La votación cerró: ya está en desarrollo.', en: 'Voting is closed: it is already in progress.' },
+  published: { es: 'La votación cerró: ya está publicada.', en: 'Voting is closed: it is already published.' },
+  discarded: { es: 'Propuesta cerrada: no admite votos ni donaciones.', en: 'Closed proposal: it does not accept votes or donations.' },
+  duplicate: { es: 'Propuesta cerrada como duplicada: votá la original.', en: 'Closed as a duplicate: vote for the original one.' },
+};

@@ -6,7 +6,7 @@ import AppSidebar from '@/components/AppSidebar.vue';
 import CertTags from '@/components/CertTags.vue';
 import FavoriteButton from '@/components/FavoriteButton.vue';
 import DemoBanner from '@/community/components/DemoBanner.vue';
-import { aboutOpen, query, sidebarOpen } from '@/composables/useAppState';
+import { aboutOpen, pageTitle, query, sidebarOpen } from '@/composables/useAppState';
 import { toastMessage, toastVisible } from '@/composables/useToast';
 import { locale, toggleLocale, tr, ui } from '@/i18n';
 import { BRAND } from '@/lib/brand';
@@ -22,7 +22,7 @@ const site = computed(() => (locale.value === 'es' ? BRAND.siteEs : BRAND.siteEn
 const page = computed(() => {
   if (tool.value) return { title: tr(tool.value.name), description: tr(tool.value.description) };
   const { title, description } = route.meta;
-  return title ? { title: tr(title), description: description ? tr(description) : ui.value.heroText } : null;
+  return title ? { title: pageTitle.value || tr(title), description: description ? tr(description) : ui.value.heroText } : null;
 });
 
 const setMeta = (sel: string, attr: string, value: string) => document.querySelector(sel)?.setAttribute(attr, value);
