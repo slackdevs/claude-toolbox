@@ -43,7 +43,7 @@ const columns = computed(() => COLUMNS.map((status) => ({ status, items: items.v
       <section v-for="c in columns" :key="c.status" class="roadmap-col" :aria-labelledby="`col-${c.status}`">
         <h2 :id="`col-${c.status}`" class="roadmap-head">
           <StatusBadge :status="c.status" />
-          <span class="sr-only">{{ tr(STATUS_LABELS[c.status].name) }}: </span><small>{{ t.count(c.items.length) }}</small>
+          <small>{{ t.count(c.items.length) }}</small>
         </h2>
         <p class="note">{{ tr(STATUS_LABELS[c.status].hint) }}</p>
         <p v-if="!c.items.length" class="empty">{{ t.empty }}</p>

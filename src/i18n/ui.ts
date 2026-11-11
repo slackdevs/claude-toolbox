@@ -42,7 +42,6 @@ const es = {
   demoTag: 'Demo',
   sampleData: 'Datos de ejemplo',
   provisional: 'provisorio',
-  comingSoon: (phase: number) => `En construcción: esta pantalla llega en la fase ${phase}.`,
 };
 
 export type UiMessages = typeof es;
@@ -90,7 +89,6 @@ const en: UiMessages = {
   demoTag: 'Demo',
   sampleData: 'Sample data',
   provisional: 'provisional',
-  comingSoon: (phase: number) => `Under construction: this screen arrives in phase ${phase}.`,
 };
 
 export const UI = { es, en };

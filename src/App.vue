@@ -14,6 +14,7 @@ import { findTool } from '@/tools';
 
 // Diferido: si la capa comunitaria no carga, el resto de la app sigue funcionando.
 const CommunityHost = defineAsyncComponent(() => import('@/community/components/CommunityHost.vue'));
+const ToolCommunityActions = defineAsyncComponent(() => import('@/community/components/ToolCommunityActions.vue'));
 
 const route = useRoute();
 const router = useRouter();
@@ -121,6 +122,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey));
           <h1>{{ tr(tool.name) }}</h1>
           <p>{{ tr(tool.description) }}</p>
           <CertTags :certs="tool.certs" />
+          <ToolCommunityActions :tool-path="tool.path" />
         </div>
         <FavoriteButton :path="tool.path" inline />
       </div>

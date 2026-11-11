@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, defineAsyncComponent } from 'vue';
 import ToolCard from '@/components/ToolCard.vue';
 import { certFilter, favorites, query } from '@/composables/useAppState';
 import { tr, ui } from '@/i18n';
 import { CERT_KEYS, CERTS } from '@/lib/certs';
 import { tools, toolsByCategory } from '@/tools';
 import type { Tool } from '@/tools/tool';
+
+// Bloque comunitario, diferido: si falla, la grilla de herramientas sigue igual.
+const HomeCommunity = defineAsyncComponent(() => import('@/community/components/HomeCommunity.vue'));
 
 // Busca en ambos idiomas: una palabra en inglés encuentra la herramienta aunque la UI esté en español (y viceversa).
 const matches = (t: Tool) => {
@@ -28,6 +31,7 @@ const groups = computed(() => toolsByCategory.map((c) => ({ ...c, tools: c.tools
       <p class="hero-subtitle">API · Prompts · MCP · <span class="hl">Claude Code</span> · {{ ui.agents }}</p>
       <p>{{ ui.heroText }}</p>
     </div>
+    <HomeCommunity v-if="!query.trim() && !certFilter" />
     <div class="chips">
       <button class="chip" :class="{ on: !certFilter }" @click="certFilter = ''">{{ ui.all }}</button>
       <button v-for="k in CERT_KEYS" :key="k" class="chip" :class="{ on: certFilter === k }" @click="certFilter = k">

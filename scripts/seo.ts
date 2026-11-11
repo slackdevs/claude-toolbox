@@ -2,16 +2,22 @@
 // - dist/<herramienta>/index.html: HTML estático por herramienta (title, description, canonical, OG, JSON-LD
 //   y contenido legible sin JS). Vue lo reemplaza al montar.
 // - dist/index.html (home) y dist/404.html (fallback para rutas desconocidas, noindex).
+// - dist/cheatsheets/ y dist/cheatsheets/<slug>/: índice y un HTML por cheatsheet, con el contenido de docs/Cheatsheets/*.md.
+// - dist/propuestas/, dist/roadmap/ (title, description y canonical; su contenido es dinámico) y
+//   dist/propuestas/nueva/, dist/admin/ (noindex, fuera de sitemap y llms).
 // - sitemap.xml, robots.txt, llms.txt y llms-full.txt (https://llmstxt.org).
 // Los datos salen del mismo registro de herramientas que usa la app: no hay que mantener listas aparte.
 import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { runnerImport, type Plugin, type ResolvedConfig } from 'vite';
 import type { Localized } from '../src/i18n';
+import type { Block } from '../src/lib/markdown';
 import type { CategoryKey, Tool } from '../src/tools/tool';
 import { BRAND } from '../src/lib/brand';
 
 type Cert = { code: string; name: string };
+type Sheet = { cert: Tool['certs'][number]; slug: string; source: string; reviewedAt: string; summary: Localized };
+type PageRoute = { name: string; meta: { title: Localized; description: Localized; noindex?: boolean } };
 
 const SITE_NAME = 'Claude Toolbox';
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -127,8 +133,80 @@ export function seo(): Plugin {
         await writeFile(join(dir, 'index.html'), render(head({ title, description, url, jsonld: ld }), body));
       }
 
-      // sitemap.xml
-      const urls = [site, ...tools.map(urlOf)];
+      // ---- Cheatsheets y capa comunitaria ----
+      const sheetsMod = await load<{
+        cheatsheets: Sheet[];
+        CHEATSHEETS_DIR: string;
+        parseCheatsheet: (markdown: string) => { blocks: Block[]; sections: { id: string; text: string }[] };
+      }>('/src/cheatsheets/index.ts');
+      const { toHtml } = await load<{ toHtml: (blocks: Block[]) => string }>('/src/lib/markdown.ts');
+      const { cheatsheetRoutes } = await load<{ cheatsheetRoutes: PageRoute[] }>('/src/cheatsheets/routes.ts');
+      const { communityRoutes } = await load<{ communityRoutes: PageRoute[] }>('/src/community/routes.ts');
+      const routeMeta = (name: string) => [...cheatsheetRoutes, ...communityRoutes].find((r) => r.name === name)!.meta;
+
+      const pageUrl = (path: string) => `${site}${path}/`;
+      const crumbs = (...items: [name: string, url: string][]) => ({
+        '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+        itemListElement: [[SITE_NAME, site] as [string, string], ...items].map(([name, item], i) => ({ '@type': 'ListItem', position: i + 1, name, item })),
+      });
+      const writePage = async (path: string, headHtml: string, body: string) => {
+        const dir = join(outDir, path);
+        await mkdir(dir, { recursive: true });
+        await writeFile(join(dir, 'index.html'), render(headHtml, body));
+      };
+
+      // Índice de cheatsheets
+      const sheets = sheetsMod.cheatsheets.map((s) => ({ ...s, code: CERTS[s.cert]!.code, certName: CERTS[s.cert]!.name, url: pageUrl(`cheatsheets/${s.slug}`) }));
+      const sheetsMeta = routeMeta('cheatsheets');
+      const sheetsUrl = pageUrl('cheatsheets');
+      const sheetIndex = `<ul>${sheets.map((s) => `<li><a href="${s.url}">Cheatsheet ${esc(s.code)} — ${esc(s.certName)}</a>: ${esc(s.summary.es)}</li>`).join('')}</ul>`;
+      await writePage(
+        'cheatsheets',
+        head({ title: `${sheetsMeta.title.es} — ${SITE_NAME} · SlackDevs`, description: sheetsMeta.description.es, url: sheetsUrl, jsonld: [crumbs([sheetsMeta.title.es, sheetsUrl])] }),
+        `<nav><a href="${site}">${SITE_NAME}</a></nav><h1>${esc(sheetsMeta.title.es)}</h1><p>${esc(sheetsMeta.description.es)}</p><p lang="en">${esc(sheetsMeta.description.en)}</p>${sheetIndex}`,
+      );
+
+      // Un cheatsheet por credencial, con su contenido completo legible sin JS
+      const sheetSections = new Map<string, string[]>();
+      for (const s of sheets) {
+        const doc = sheetsMod.parseCheatsheet(await readFile(join(root, sheetsMod.CHEATSHEETS_DIR, s.source), 'utf8'));
+        sheetSections.set(s.slug, doc.sections.map((x) => x.text));
+        const name = `Cheatsheet ${s.code} — ${s.certName}`;
+        const ld = [
+          {
+            '@context': 'https://schema.org', '@type': 'TechArticle', headline: name, description: s.summary.es, url: s.url, inLanguage: 'es',
+            dateModified: s.reviewedAt, isAccessibleForFree: true, author: publisher, publisher, isPartOf: { '@type': 'WebSite', name: SITE_NAME, url: site },
+          },
+          crumbs([sheetsMeta.title.es, sheetsUrl], [name, s.url]),
+        ];
+        const related = tools.filter((t) => t.certs.includes(s.cert)).map((t) => `<li><a href="${urlOf(t)}">${esc(t.name.es)}</a> — ${esc(t.description.es)}</li>`).join('');
+        await writePage(
+          `cheatsheets/${s.slug}`,
+          head({ title: `${name} — ${SITE_NAME} · SlackDevs`, description: s.summary.es, url: s.url, jsonld: ld }),
+          `<nav><a href="${site}">${SITE_NAME}</a> › <a href="${sheetsUrl}">Cheatsheets</a></nav><h1>${esc(name)}</h1><p>${esc(s.summary.es)}</p><p lang="en">${esc(s.summary.en)}</p>` +
+            `<p>Última revisión: ${s.reviewedAt}. Puede estar desactualizado: confirmá siempre con la guía oficial del examen.</p>${toHtml(doc.blocks)}` +
+            (related ? `<h2>Herramientas relacionadas</h2><ul>${related}</ul>` : ''),
+        );
+      }
+
+      // Propuestas y roadmap: el contenido es dinámico, la página estática lleva title, description y canonical.
+      const dynamicPages = [
+        { name: 'proposals', path: 'propuestas' },
+        { name: 'roadmap', path: 'roadmap' },
+        { name: 'proposal-new', path: 'propuestas/nueva' },
+        { name: 'admin', path: 'admin' },
+      ].map((p) => ({ ...p, meta: routeMeta(p.name), url: pageUrl(p.path) }));
+      for (const p of dynamicPages) {
+        await writePage(
+          p.path,
+          head({ title: `${p.meta.title.es} — ${SITE_NAME} · SlackDevs`, description: p.meta.description.es, url: p.url, jsonld: p.meta.noindex ? [] : [crumbs([p.meta.title.es, p.url])], noindex: p.meta.noindex }),
+          `<nav><a href="${site}">${SITE_NAME}</a></nav><h1>${esc(p.meta.title.es)}</h1><p>${esc(p.meta.description.es)}</p><p lang="en">${esc(p.meta.description.en)}</p>`,
+        );
+      }
+      const indexedPages = dynamicPages.filter((p) => !p.meta.noindex);
+
+      // sitemap.xml (sin /admin/ ni páginas noindex)
+      const urls = [site, ...tools.map(urlOf), sheetsUrl, ...sheets.map((s) => s.url), ...indexedPages.map((p) => p.url)];
       await writeFile(
         join(outDir, 'sitemap.xml'),
         `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
@@ -170,12 +248,40 @@ export function seo(): Plugin {
           ),
           ...(full ? [] : ['']),
         ]);
-      const optional = ['## Optional', '', `- [Full tool details](${site}llms-full.txt): every tool with Spanish and English descriptions, certifications and keywords`, `- [SlackDevs](${BRAND.site}): author's site, articles about Claude and Claude Code`, `- [Source code](${BRAND.github}): GitHub repository`, ''];
+      const extra = (full: boolean) => [
+        '## Cheatsheets',
+        '',
+        ...(full ? ['One cheatsheet per credential (content in Spanish): quick reference, core knowledge, workflows, decision tables, troubleshooting, checklists and glossary.', ''] : []),
+        ...sheets.flatMap((s) =>
+          full
+            ? [
+                `### Cheatsheet ${s.code} — ${s.certName}`,
+                '',
+                `- URL: ${s.url}`,
+                `- EN: ${s.summary.en}`,
+                `- ES: ${s.summary.es}`,
+                `- Last reviewed: ${s.reviewedAt}`,
+                `- Sections: ${sheetSections.get(s.slug)!.join('; ')}`,
+                '',
+              ]
+            : [`- [Cheatsheet ${s.code} — ${s.certName}](${s.url}): ${s.summary.en}`],
+        ),
+        ...(full ? [] : ['']),
+        '## Community',
+        '',
+        ...indexedPages.flatMap((p) =>
+          full ? [`### ${p.meta.title.en} / ${p.meta.title.es}`, '', `- URL: ${p.url}`, `- EN: ${p.meta.description.en}`, `- ES: ${p.meta.description.es}`, ''] : [`- [${p.meta.title.en}](${p.url}): ${p.meta.description.en}`],
+        ),
+        ...(full ? [] : ['']),
+      ];
+      const optional = ['## Optional', '', `- [Full details](${site}llms-full.txt): every tool and cheatsheet with Spanish and English descriptions, certifications and keywords`, `- [SlackDevs](${BRAND.site}): author's site, articles about Claude and Claude Code`, `- [Source code](${BRAND.github}): GitHub repository`, ''];
 
-      await writeFile(join(outDir, 'llms.txt'), [...intro, ...section(false), ...optional].join('\n'));
-      await writeFile(join(outDir, 'llms-full.txt'), [...intro, ...section(true)].join('\n'));
+      await writeFile(join(outDir, 'llms.txt'), [...intro, ...section(false), ...extra(false), ...optional].join('\n'));
+      await writeFile(join(outDir, 'llms-full.txt'), [...intro, ...section(true), ...extra(true)].join('\n'));
 
-      config.logger.info(`[seo] ${tools.length} páginas de herramienta + sitemap.xml, robots.txt, llms.txt, llms-full.txt`);
+      config.logger.info(
+        `[seo] ${tools.length} páginas de herramienta, ${sheets.length + 1} de cheatsheets, ${dynamicPages.length} de comunidad + sitemap.xml, robots.txt, llms.txt, llms-full.txt`,
+      );
     },
   };
 }

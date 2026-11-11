@@ -35,14 +35,6 @@ aside .nav-ico { width: 18px; text-align: center; color: var(--acc); }
 /* ---------- Modal ---------- */
 .dialog-title { margin-top: 0 !important; }
 
-/* ---------- Listas simples ---------- */
-.plain-list { list-style: none; margin: 14px 0 0; padding: 0; }
-.plain-list li {
-  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-  padding: 10px 0; border-bottom: 1px solid var(--border-subtle);
-}
-.plain-list li a { flex: 1; min-width: 200px; }
-
 /* El header ya va justo: por debajo de este ancho los accesos quedan sólo en el menú lateral. */
 @media (max-width: 1320px) {
   .header-nav { display: none; }
@@ -259,6 +251,22 @@ input[aria-invalid="true"], select[aria-invalid="true"], textarea[aria-invalid="
 .md li { margin-bottom: 4px; }
 .md li::marker { color: var(--color-tertiary); }
 .md strong { color: var(--color-text-main); }
+
+/* ---------- Integración: cabecera de herramienta y home ---------- */
+.tool-community { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 12px; font-size: 12.5px; }
+.home-community { margin-bottom: 22px; }
+.home-cta { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-color: var(--border-accent); }
+.home-cta h2 { margin: 0 0 4px; font: 700 1.3rem var(--font-serif); color: var(--color-text-main); }
+.home-cta p { margin: 0; color: var(--color-text-muted); font-size: 13px; }
+.home-cta .btns { margin: 0; }
+.home-sub { display: flex; align-items: center; gap: 8px; margin: 18px 0 10px; font: 700 0.7rem var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-tertiary); }
+.home-top { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+.home-sheets { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.home-sheet { flex-direction: row; align-items: center; gap: 12px; padding: 12px 14px; }
+.home-sheet img { flex: none; object-fit: contain; }
+.home-sheet span { display: flex; flex-direction: column; min-width: 0; }
+.home-sheet b { display: flex; align-items: center; gap: 6px; font: 700 12px var(--font-mono); color: var(--color-text-main); }
+.home-sheet small { color: var(--color-text-muted); font-size: 12px; }
 
 /* Perfil completo (cheatsheets) */
 .md-full { font-size: 14px; line-height: 1.65; }
