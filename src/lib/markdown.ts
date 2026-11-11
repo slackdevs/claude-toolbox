@@ -117,6 +117,16 @@ export function parseInline(s: string, opts: MarkdownOptions = {}): Inline[] {
       }
     }
 
+    // Entidades numéricas (&#91;): se convierten al carácter; el resultado sigue siendo texto.
+    if (opts.full && ch === '&') {
+      const m = /^&#(\d{2,6});/.exec(s.slice(i));
+      if (m) {
+        buf += String.fromCodePoint(Number(m[1]));
+        i += m[0].length;
+        continue;
+      }
+    }
+
     if (opts.full && ch === '<') {
       const m = /^<br\s*\/?>/i.exec(s.slice(i));
       if (m) {

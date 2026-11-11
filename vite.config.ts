@@ -9,6 +9,12 @@ import { BRAND } from './src/lib/brand';
 export default defineConfig({
   base: new URL(BRAND.tools).pathname,
   plugins: [vue(), seo()],
+  build: {
+    rollupOptions: {
+      // Los chunks de docs/Cheatsheets/*.md heredan el nombre del archivo: sin espacios en las URLs.
+      output: { sanitizeFileName: (name) => name.replace(/[^\w.]+/g, '-') },
+    },
+  },
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },

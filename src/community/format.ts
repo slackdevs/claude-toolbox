@@ -6,7 +6,10 @@ import { COMMUNITY_CONFIG } from './config';
 import { ERROR_LABELS } from './labels';
 import { CommunityError, type CommunityErrorCode } from './types';
 
-export const fmtDate = (iso: string): string => new Intl.DateTimeFormat(intlLocale(), { dateStyle: 'medium' }).format(new Date(iso));
+/** Una fecha sin hora ("2026-11-09") se toma como día local, no como medianoche UTC (que en América cae el día anterior). */
+const toDate = (iso: string): Date => new Date(/^\d{4}-\d{2}-\d{2}$/.test(iso) ? `${iso}T12:00:00` : iso);
+
+export const fmtDate = (iso: string): string => new Intl.DateTimeFormat(intlLocale(), { dateStyle: 'medium' }).format(toDate(iso));
 
 export const fmtDateTime = (iso: string): string =>
   new Intl.DateTimeFormat(intlLocale(), { dateStyle: 'short', timeStyle: 'short' }).format(new Date(iso));
