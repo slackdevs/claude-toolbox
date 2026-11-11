@@ -11,6 +11,8 @@ import LangTag from '../components/LangTag.vue';
 import LifecycleTimeline from '../components/LifecycleTimeline.vue';
 import ScoreBreakdown from '../components/ScoreBreakdown.vue';
 import StatusBadge from '../components/StatusBadge.vue';
+import VoteControl from '../components/VoteControl.vue';
+import VoterBar from '../components/VoterBar.vue';
 import { useProposal } from '../composables/useProposal';
 import { COMMUNITY_CONFIG } from '../config';
 import { fmtDate, fmtHours, fmtMoney, toolName } from '../format';
@@ -38,7 +40,7 @@ const t = useMessages({
 });
 
 const route = useRoute();
-const { proposal: p, loading, error, reload } = useProposal(() => String(route.params.id));
+const { proposal: p, loading, error, reload, patch } = useProposal(() => String(route.params.id));
 
 usePageTitle(() => p.value?.title);
 
@@ -137,6 +139,10 @@ const share = () => copyText(location.href);
           <section class="card">
             <h3>{{ t.participate }}</h3>
             <p v-if="locked" class="locked-note">{{ tr(locked) }}</p>
+            <template v-else>
+              <VoteControl :proposal="p" row @update="patch" />
+              <VoterBar />
+            </template>
           </section>
         </div>
       </div>

@@ -9,8 +9,11 @@ import type { ProposalSummary } from '../types';
 import LangTag from './LangTag.vue';
 import ScoreBreakdown from './ScoreBreakdown.vue';
 import StatusBadge from './StatusBadge.vue';
+import VoteControl from './VoteControl.vue';
 
-const props = defineProps<{ proposal: ProposalSummary; compact?: boolean }>();
+// `readonly`: sólo muestra el puntaje (roadmap, home); si no, incluye el control de voto.
+const props = defineProps<{ proposal: ProposalSummary; compact?: boolean; readonly?: boolean }>();
+const emit = defineEmits<{ update: [proposal: ProposalSummary] }>();
 
 const t = useMessages({
   es: { estimate: 'Tiempo estimado', pending: 'Estimación pendiente de revisión', improves: 'Mejora de' },
@@ -23,7 +26,8 @@ const excerpt = computed(() => plainText(parseMarkdown(props.proposal.descriptio
 <template>
   <article class="card pcard" :class="{ compact }">
     <div class="pcard-side">
-      <slot name="side"><ScoreBreakdown :proposal="proposal" /></slot>
+      <ScoreBreakdown v-if="readonly" :proposal="proposal" />
+      <VoteControl v-else :proposal="proposal" @update="emit('update', $event)" />
     </div>
     <div class="pcard-body">
       <div class="pcard-tags">

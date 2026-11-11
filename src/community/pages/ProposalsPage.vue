@@ -8,6 +8,7 @@ import { findTool, tools } from '@/tools';
 import ProposalCard from '../components/ProposalCard.vue';
 import ProposalSkeleton from '../components/ProposalSkeleton.vue';
 import RankingInfoDialog from '../components/RankingInfoDialog.vue';
+import VoterBar from '../components/VoterBar.vue';
 import { useProposals } from '../composables/useProposals';
 import { toolName } from '../format';
 import { ERROR_LABELS, STATUS_LABELS, TYPE_LABELS } from '../labels';
@@ -75,7 +76,7 @@ function clear() {
   router.replace({ query: {} });
 }
 
-const { items, loading, error, reload } = useProposals(() => filters.value);
+const { items, loading, error, reload, patch } = useProposals(() => filters.value);
 const rankingOpen = ref(false);
 
 // CTA del estado vacío, con lo que ya eligió precargado en el formulario.
@@ -140,6 +141,8 @@ const emptyText = computed(() => {
       </label>
     </form>
 
+    <VoterBar />
+
     <div class="list-bar">
       <span aria-live="polite">{{ loading || error ? '' : t.count(items.length) }}</span>
       <button v-if="hasFilters" class="btn ghost sm" type="button" @click="clear">{{ t.clear }}</button>
@@ -155,7 +158,7 @@ const emptyText = computed(() => {
       <button v-if="hasFilters" class="btn ghost" type="button" @click="clear">{{ t.clear }}</button>
     </div>
     <div v-else class="plist">
-      <ProposalCard v-for="p in items" :key="p.id" :proposal="p" />
+      <ProposalCard v-for="p in items" :key="p.id" :proposal="p" @update="patch" />
     </div>
 
     <RankingInfoDialog v-model="rankingOpen" />

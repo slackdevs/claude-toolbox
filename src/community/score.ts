@@ -47,7 +47,16 @@ export function scoreBreakdown(p: { upvotes: number; downvotes: number; donation
   return { upvotes: p.upvotes, downvotes: p.downvotes, votesNet, donationPoints: p.donationPoints, score: votesNet + p.donationPoints };
 }
 
-type Rankable = { score: number; createdAt: string };
+type Votable = { upvotes: number; downvotes: number; donationPoints: number; score: number; myVote: 1 | -1 | 0 };
+
+/** Resultado de votar (1, −1) o retirar el voto (0), partiendo del voto actual. Para la actualización optimista. */
+export function applyVote<T extends Votable>(p: T, value: 1 | -1 | 0): T {
+  const upvotes = p.upvotes - (p.myVote === 1 ? 1 : 0) + (value === 1 ? 1 : 0);
+  const downvotes = p.downvotes - (p.myVote === -1 ? 1 : 0) + (value === -1 ? 1 : 0);
+  return { ...p, upvotes, downvotes, myVote: value, score: upvotes - downvotes + p.donationPoints };
+}
+
+type Rankable ={ score: number; createdAt: string };
 
 /** Orden del ranking: mayor puntaje primero; ante empate, la propuesta más antigua primero. */
 export const compareRanking = (a: Rankable, b: Rankable): number => b.score - a.score || a.createdAt.localeCompare(b.createdAt);

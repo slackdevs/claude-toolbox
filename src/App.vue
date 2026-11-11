@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue';
+import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import AboutModal from '@/components/AboutModal.vue';
 import AppSidebar from '@/components/AppSidebar.vue';
@@ -11,6 +11,9 @@ import { toastMessage, toastVisible } from '@/composables/useToast';
 import { locale, toggleLocale, tr, ui } from '@/i18n';
 import { BRAND } from '@/lib/brand';
 import { findTool } from '@/tools';
+
+// Diferido: si la capa comunitaria no carga, el resto de la app sigue funcionando.
+const CommunityHost = defineAsyncComponent(() => import('@/community/components/CommunityHost.vue'));
 
 const route = useRoute();
 const router = useRouter();
@@ -146,6 +149,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKey));
     </main>
   </div>
 
+  <CommunityHost v-if="route.meta.community" />
   <AboutModal />
   <div class="toast" :class="{ show: toastVisible }">{{ toastMessage }}</div>
 </template>
